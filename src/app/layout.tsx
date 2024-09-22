@@ -12,7 +12,7 @@ import clsx from 'clsx'
 
 const links = [
   { href: '/', label: 'ホーム', icon: <IconHome className='inline-block mr-2' /> },
-  { href: '/weekcalendar', label: '時間割', icon: <IconCalendar className='inline-block mr-2' /> },
+  { href: '/w', label: '時間割', icon: <IconCalendar className='inline-block mr-2' /> },
   { href: '/settings', label: '設定', icon: <IconSettings className='inline-block mr-2' /> },
   { href: '/help', label: 'ヘルプ', icon: <IconHelp className='inline-block mr-2' /> },
 ];
@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="min-h-screen bg-gray-100">
 
             <div
-            className={clsx('fixed top-0 left-0 h-full w-60 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-10 md:translate-x-0', isOpen ? 'translate-x-0 ' : 'hidden')}
+            className={clsx('fixed top-0 left-0 h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-10 md:translate-x-0', isOpen ? 'w-44' : 'hidden -translate-x-full')}
           >
               <nav className="p-2 space-y-2">
                 {links.map((link, index) => (
@@ -58,20 +58,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
             </div>
 
-            <div className={clsx('transition-all duration-200', isOpen ? 'ml-60' : '')}>
-              <header className="flex h-16 bg-white shadow items-center">
-                <button
-                className='p-3 rounded-md hover:bg-gray-200 '
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                  <IconToggle className='text-gray-700' />
-                </button>
-              </header>
+            <header className={clsx('flex h-16 bg-white fixed w-full items-center shadow top-0 z-20', isOpen ? 'ml-44' : '' )}>
+            <button
+              className='p-3 rounded-md hover:bg-gray-200 '
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <IconToggle className='text-gray-700' />
+            </button>
+          </header>
 
-              <main className="p-4">
-                {children}
-              </main>
+          <div className={clsx('pt-16 transition-all duration-200 flex-col fixed', isOpen ? 'ml-44 ' : '')}>
+            <div className="h-screen overflow-auto">
+              {children}
             </div>
+          </div>
 
           </div>
         </body>
