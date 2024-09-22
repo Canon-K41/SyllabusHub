@@ -39,37 +39,43 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel='manifest' href='manifest.json' />
         <title>title</title>
       </head>
-      <body>
-        <div className="min-h-screen bg-gray-100">
 
-          <div
+        <body>
+          <div className="min-h-screen bg-gray-100">
+
+            <div
             className={clsx('fixed top-0 left-0 h-full w-60 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-10 md:translate-x-0', isOpen ? 'translate-x-0 ' : 'hidden')}
           >
-            <nav className="p-2 space-y-2">
-              {links.map((link, index) => (
-                <div key={index} className="block py-2 px-4 text-gray-700 hover:bg-gray-200 rounded transition duration-200">
+              <nav className="p-2 space-y-2">
+                {links.map((link, index) => (
                   <Link href={link.href}>
-                    {link.icon}
-                    {link.label}
-                  </Link>
-                </div>
-              ))}
-            </nav>
-          </div>
+                    <div key={index} className="block py-2 px-4 text-gray-700 hover:bg-gray-200 rounded transition duration-200">
+                      {link.icon}
+                      {link.label}
+                    </div>
+                    </Link>
+                ))}
+              </nav>
+            </div>
 
-          <main className={clsx('transition-all duration-200', isOpen ? 'ml-60' : '')}>
-            <header className="flex h-16 bg-white shadow items-center">
-              <button
-              className='p-3 rounded-md hover:bg-gray-200 '
-              onClick={() => setIsOpen(!isOpen)}
-            >
-                <IconToggle className='text-gray-700' />
-              </button>
-             </header>
-            {children}
-          </main>
-        </div>
-      </body>
-    </html>
+            <div className={clsx('transition-all duration-200', isOpen ? 'ml-60' : '')}>
+              <header className="flex h-16 bg-white shadow items-center">
+                <button
+                className='p-3 rounded-md hover:bg-gray-200 '
+                onClick={() => setIsOpen(!isOpen)}
+              >
+                  <IconToggle className='text-gray-700' />
+                </button>
+              </header>
+
+              <main className="p-4">
+                {children}
+              </main>
+            </div>
+
+          </div>
+        </body>
+
+      </html>
   );
 }
