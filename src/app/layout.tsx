@@ -12,7 +12,7 @@ import clsx from 'clsx'
 
 const links = [
   { href: '/', label: 'ホーム', icon: <IconHome className='inline-block mr-2' /> },
-  { href: '/w', label: '時間割', icon: <IconCalendar className='inline-block mr-2' /> },
+  { href: '/calendar', label: '時間割', icon: <IconCalendar className='inline-block mr-2' /> },
   { href: '/settings', label: '設定', icon: <IconSettings className='inline-block mr-2' /> },
   { href: '/help', label: 'ヘルプ', icon: <IconHelp className='inline-block mr-2' /> },
 ];
