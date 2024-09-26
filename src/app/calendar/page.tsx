@@ -1,61 +1,40 @@
 "use client"
 
-import React from 'react'
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
+import { useEffect, useRef, useState } from 'react';
+import WeeklyCalendar from '@/components/calendar/weekly-calendar';
 
-export default function WeeklyCalendar() {
-  const handleDateSelect = (selectInfo: any) => {
-    const title = prompt('イベントのタイトルを入力してください:')
-    const calendarApi = selectInfo.view.calendar
+export default function Page() {
+  const divRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ width: 0, height: 0 });
 
-    calendarApi.unselect() // 選択を解除
+  useEffect(() => {
+    const handleResize = (entries: ResizeObserverEntry[]) => {
+      for (let entry of entries) {
+        if (entry.target === divRef.current) {
+          setSize({
+            width: entry.contentRect.width,
+            height: entry.contentRect.height,
+          });
+        }
+      }
+    };
 
-    if (title) {
-      calendarApi.addEvent({
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay
-      })
+    const resizeObserver = new ResizeObserver(handleResize);
+
+    if (divRef.current) {
+      resizeObserver.observe(divRef.current);
     }
-  }
 
-  const handleEventClick = (clickInfo: any) => {
-    if (confirm(`'${clickInfo.event.title}'を削除してもよろしいですか？`)) {
-      clickInfo.event.remove()
-    }
-  }
+    return () => {
+      if (divRef.current) {
+        resizeObserver.unobserve(divRef.current);
+      }
+    };
+  }, []);
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'timeGridWeek,timeGridDay'
-        }}
-        editable={true}
-        selectable={true}
-        selectMirror={true}
-        dayMaxEvents={true}
-        weekends={true}
-        initialEvents={[
-          { title: 'イベント1', start: new Date() }
-        ]}
-        select={handleDateSelect}
-        eventClick={handleEventClick}
-        locale="ja"
-        allDaySlot={false}
-        slotMinTime="07:00:00"
-        slotMaxTime="21:00:00"
-        height="auto"
-        className="fc-theme-standard"
-      />
+    <div ref={divRef} style={{ width: '100%', height: '100%' }}>
+      <WeeklyCalendar size={size} />
     </div>
-  )
+  );
 }
