@@ -6,10 +6,12 @@ import IconCalendar from '@/assets/icons/week-calendar.svg';
 import IconSettings from '@/assets/icons/setting.svg';
 import IconHelp from '@/assets/icons/help.svg';
 
+const user_id = 'guest';
+
 const links = [
   { href: '/', label: 'ホーム', icon: <IconHome className='inline-block mr-2' /> },
-  { href: '/calendar', label: '時間割', icon: <IconCalendar className='inline-block mr-2' /> },
-  { href: '/settings', label: '設定', icon: <IconSettings className='inline-block mr-2' /> },
+  { href: `/${user_id}/calendar`, label: '時間割', icon: <IconCalendar className='inline-block mr-2' /> },
+  { href: `/${user_id}/settings`, label: '設定', icon: <IconSettings className='inline-block mr-2' /> },
   { href: '/help', label: 'ヘルプ', icon: <IconHelp className='inline-block mr-2' /> },
 ];
 
