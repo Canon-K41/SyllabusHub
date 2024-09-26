@@ -6,11 +6,14 @@ export async function GET(req: NextRequest) {
     .from('events')
     .select('*')
 
-  console.log(data)
+    console.log(data)
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
+  }else if (data === null) {
+    console.log('No data found')
   }
+
 
   return NextResponse.json(data, { status: 200 })
 }

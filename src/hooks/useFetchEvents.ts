@@ -14,7 +14,8 @@ export const useFetchEvents = () => {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const res = await fetch('/api/events')
+      const res = await fetch('/api/getEventsData')
+      console.log(res)
       const data: Event[] = await res.json()
       setEvents(data)
     }

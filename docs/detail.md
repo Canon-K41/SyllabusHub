@@ -14,53 +14,68 @@
 ├── public
 │   ├── manifest.json // PWAのメタデータ
 │   ├── service-worker.js // オフライン対応のService Worker
-│   │── icons // PWAのアイコン
+│   ├── icons // PWAのアイコン
 │   │   ├── icon-72x72.png
-│   │   └── ...
-│   └── ...
+│   │   └── ... // 他のアイコンファイル
+│   └── ... // その他の公開ファイル
 │
 ├── src
 │   ├── app
 │   │   ├── layout.tsx // レイアウトコンポーネント
-│   │   ├── page.tsx // ページコンポーネント
-│   │   ├── login
-│   │   │   └── page.ts  // ログインページ
-│   │   ├── register
-│   │   │   └── page.tsx // ユーザー登録ページ
-│   │   └── classes
-│   │       ├── page.tsx // 授業管理ページ
-│   │       └── [id]
-│   │          └── page.tsx // 授業詳細ページ
+│   │   ├── page.tsx // ログインページ
+│   │   ├── help
+│   │   │   └── page.tsx // ヘルプページ
+│   │   ├── [user_id]
+│   │       ├── page.tsx // ユーザーホームページ
+│   │       ├── calendar
+│   │       │   ├── page.tsx // カレンダーページ
+│   │       │   ├── settings // カレンダー設定
+│   │       │       └── page.tsx // カレンダー設定ページ
+│   │       └── userSettings // ユーザー設定
+│   │           └── page.tsx // ユーザー設定ページ
+|   ├── assets
+│   │   ├── HomeIcon.svg // ホームアイコン
+│   |   └── ... // 他のアセットファイル
+│   │
 │   ├── components
-│   │   └── Clalendar
-│   │       ├── Calendar.tsx // カレンダーコンポーネント
-│   │       ├── ClassForm.tsx   // 授業の追加・編集フォーム
-│   │       └── ClassList.tsx  // 授業のリスト表示
-│   ├── services
-│   │   ├── authService.ts // 認証サービス
-│   │   └── classService.ts // 授業サービス
+│   │   ├── Calendar
+│   │   │   ├── Calendar.tsx // カレンダーコンポーネント
+│   │   │   ├── ClassForm.tsx // 授業の追加・編集フォーム
+│   │   │   └── ClassList.tsx // 授業のリスト表示
+│   │   ├── layout
+│   │       ├── Header.tsx // ヘッダーコンポーネント
+│   │       └── Sidebar.tsx // サイドバーコンポーネント
+│   ├── hooks
+│   │   ├── useWindowResize.ts // ウィンドウリサイズフック
+│   │   ├── useResizeObserver.ts // リサイズオブザーバーフック
+│   │   └── useFetchEvents.ts // イベント取得フック
+│   ├── lib
+│   │   └── supabase.ts // Supabaseクライアント
 │   ├── styles
 │   │   └── global.css // グローバルスタイル
 │   ├── utils
 │   │   └── indexedDB.ts // IndexedDBユーティリティ
-│   └── App.tsx
-├── .gitignore
-├── .eslintrc.json
-├── README.md
-├── next-env.d.ts
-├── next.config.mjs
-├── package-lock.json
-├── package.json
-├── postcss.config.mjs
-├── tailwind.config.js
-└── tsconfig.json
+│   ├── api
+│       ├── events.ts // イベントAPI
+│       └── user.ts // ユーザーAPI
+│   
+├── .gitignore // Gitで無視するファイルのリスト
+├── .eslintrc.json // ESLintの設定ファイル
+├── README.md // プロジェクトの説明書
+├── next-env.d.ts // Next.jsの型定義ファイル
+├── next.config.mjs // Next.jsの設定ファイル
+├── package-lock.json // npmの依存関係のロックファイル
+├── package.json // npmの依存関係とスクリプト
+├── postcss.config.mjs // PostCSSの設定ファイル
+├── tailwind.config.js // Tailwind CSSの設定ファイル
+└── tsconfig.json // TypeScriptの設定ファイル
 ```
 
 #### 4. API設計
 
 ##### 4.1. 認証API
 - **POST /api/auth/register**
-  - リクエストボディ: `{ email: string, password: string }`
+  - リクエストボディ: ` email: string, password: string `
   - レスポンス: `{ success: boolean, message: string }`
 
 - **POST /api/auth/login**
