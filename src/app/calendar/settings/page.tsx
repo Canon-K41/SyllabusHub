@@ -7,10 +7,10 @@ import TimeSettings from '@/components/calendarSettings/TimeSettings';
 import CalendarComponent from '@/components/calendarSettings/CalendarComponent';
 import useCalendarSettings from '@/hooks/useCalendarSettings';
 import initializeNewEvent from '@/utils/initializeNewEvent';
-import { EventInput } from '@fullcalendar/core';
+import { EventInput, EventClickArg, DateSelectArg } from '@fullcalendar/core';
 
 export default function SettingsCalendarPage() {
-  const { ref, size } = useResizeObserver();
+  const { ref } = useResizeObserver();
   const { slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration } = useCalendarSettings();
   const [events, setEvents] = useState<EventInput[]>([]);
   const [newEvent, setNewEvent] = useState(initializeNewEvent());
@@ -18,7 +18,7 @@ export default function SettingsCalendarPage() {
   const openModal = useCallback(() => setIsOpen(true), []);
   const closeModal = useCallback(() => setIsOpen(false), []);
 
-  const handleEventClick = useCallback((clickInfo: any) => {
+  const handleEventClick = useCallback((clickInfo: EventClickArg) => {
     clickInfo.jsEvent.preventDefault();
     setNewEvent({
       id: clickInfo.event.id,
@@ -32,12 +32,12 @@ export default function SettingsCalendarPage() {
     openModal();
   }, [openModal]);
 
-  const handleDateSelect = useCallback((selectInfo: any) => {
+  const handleDateSelect = useCallback((selectInfo: DateSelectArg) => {
     setNewEvent(initializeNewEvent(selectInfo.startStr, selectInfo.endStr));
     openModal();
   }, [openModal]);
 
-  const handleEventChange = useCallback((dropInfo: any) => {
+  const handleEventChange = useCallback((dropInfo: EventClickArg) => {
     setEvents((prevEvents: EventInput[]) => {
       const updatedEvents = prevEvents.map(event => {
         if (event.id === dropInfo.event.id) {
@@ -77,11 +77,10 @@ export default function SettingsCalendarPage() {
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewEvent((prevEvent: any) => ({
+    setNewEvent((prevEvent => ({
       ...prevEvent,
       [name]: value,
-    }));
-  }, []);
+    })));
 
   return (
     <div ref={ref} className='p-4'>

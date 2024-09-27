@@ -4,14 +4,14 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listWeek from '@fullcalendar/list'
-import { EventInput } from '@fullcalendar/core'
+import { EventInput, DateSelectArg,  EventClickArg} from '@fullcalendar/core'
 
 
 
 interface CalendarComponentProps {
   events: EventInput[]
-  handleDateSelect: (selectInfo: any) => void
-  handleEventClick: (clickInfo: any) => void
+  handleDateSelect: (selectInfo: DateSelectArg) => void
+  handleEventClick: (clickInfo: EventClickArg) => void
 }
 
 const SettingCalendar: React.FC<CalendarComponentProps> = ({ events, handleDateSelect, handleEventClick }) => {

@@ -12,8 +12,8 @@ import listWeek from '@fullcalendar/list'
 
 
 export default function WeeklyCalendar() {
-  const { ref, size } = useResizeObserver();
-  const { slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration } = useCalendarSettings();
+  const { ref } = useResizeObserver();
+  const { slotMinTime,  slotMaxTime, slotLabelInterval,  slotDuration, } = useCalendarSettings();
   const events = useFetchEvents()
 
   return (

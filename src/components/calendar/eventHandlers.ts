@@ -1,23 +1,23 @@
-export const handleDateSelect = (selectInfo: any) => {
-  const title = prompt('イベントのタイトルを入力してください:')
-  const calendarApi = selectInfo.view.calendar
+import { EventClickArg, DateSelectArg } from '@fullcalendar/core';
 
-  calendarApi.unselect() // 選択を解除
+export const handleDateSelect = (selectInfo: DateSelectArg) => {
+  const title = prompt('イベントのタイトルを入力してください:');
+  const calendarApi = selectInfo.view.calendar;
+
+  calendarApi.unselect(); // 選択を解除
 
   if (title) {
     calendarApi.addEvent({
       title,
       start: selectInfo.startStr,
       end: selectInfo.endStr,
-      allDay: selectInfo.allDay
-    })
+      allDay: selectInfo.allDay,
+    });
   }
-}
+};
 
-export const handleEventClick = (clickInfo: any) => {
+export const handleEventClick = (clickInfo: EventClickArg) => {
   if (confirm(`'${clickInfo.event.title}'を削除してもよろしいですか？`)) {
-    clickInfo.event.remove()
+    clickInfo.event.remove();
   }
-}
-  
-
+};

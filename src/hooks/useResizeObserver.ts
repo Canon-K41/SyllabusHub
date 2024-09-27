@@ -7,7 +7,7 @@ export function useResizeObserver() {
 
   useEffect(() => {
     const handleResize = (entries: ResizeObserverEntry[]) => {
-      for (let entry of entries) {
+      for (const entry of entries) {
         if (entry.target === ref.current) {
           setSize({
             width: entry.contentRect.width,
