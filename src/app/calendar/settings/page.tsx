@@ -1,53 +1,13 @@
 'use client';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+
+import React, { useState, useCallback } from 'react';
 import { useResizeObserver } from '@/hooks/useResizeObserver';
 import EventModal from '@/components/calendarSettings/EventModal';
 import TimeSettings from '@/components/calendarSettings/TimeSettings';
 import CalendarComponent from '@/components/calendarSettings/CalendarComponent';
-import { getCalendarSetting, saveCalendarSetting, deleteDatabase } from '@/utils/indexedDB';
+import useCalendarSettings from '@/hooks/useCalendarSettings';
+import initializeNewEvent from '@/utils/initializeNewEvent';
 import { EventInput } from '@fullcalendar/core';
-
-// カスタムフックを作成
-const useCalendarSettings = () => {
-  const [slotMinTime, setMinTime] = useState("09:00:00");
-  const [slotMaxTime, setMaxTime] = useState("21:00:00");
-  const [slotLabelInterval, setSlotLabelInterval] = useState("01:00:00");
-  const [slotDuration, setSlotDuration] = useState("00:30:00");
-
-  useEffect(() => {
-    const loadCalendarSettings = async () => {
-      const minTime = await getCalendarSetting('slotMinTime');
-      const maxTime = await getCalendarSetting('slotMaxTime');
-      const labelInterval = await getCalendarSetting('slotLabelInterval');
-      const duration = await getCalendarSetting('slotDuration');
-      setSlotDuration(duration || '00:30:00');
-    };
-    loadCalendarSettings();
-    
-  }, []);
-
-  useEffect(() => {
-    const saveCalendarSettings = async () => {
-      await saveCalendarSetting('slotMinTime', slotMinTime);
-      await saveCalendarSetting('slotMaxTime', slotMaxTime);
-      await saveCalendarSetting('slotLabelInterval', slotLabelInterval);
-      await saveCalendarSetting('slotDuration', slotDuration);
-    };
-    saveCalendarSettings();
-  }, [slotMinTime, slotMaxTime, slotLabelInterval, slotDuration]);
-
-  return { slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration };
-};
-
-const initializeNewEvent = (start = '', end = '') => ({
-  id: '',
-  title: '',
-  start,
-  end,
-  place: '',
-  url: '',
-  description: '',
-});
 
 export default function SettingsCalendarPage() {
   const { ref, size } = useResizeObserver();
@@ -71,12 +31,6 @@ export default function SettingsCalendarPage() {
     });
     openModal();
   }, [openModal]);
-
-  async function getStartTimes() {
-    const data = await getCalendarSetting('slotMinTime');
-    console.log(data);
-  }
-
 
   const handleDateSelect = useCallback((selectInfo: any) => {
     setNewEvent(initializeNewEvent(selectInfo.startStr, selectInfo.endStr));
@@ -131,8 +85,6 @@ export default function SettingsCalendarPage() {
 
   return (
     <div ref={ref} className='p-4'>
-      <button onClick={deleteDatabase} className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>データベースを削除</button>
-      <button onClick={getStartTimes} className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>データベースを取得</button>
       <TimeSettings
         slotMinTime={slotMinTime}
         setMinTime={setMinTime}

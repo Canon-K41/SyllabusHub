@@ -54,6 +54,14 @@ const EventModal = ({ modalIsOpen, closeModal, newEvent, handleInputChange, hand
             fullWidth
             margin="normal"
           />
+          <TextField
+            label="説明"
+            name="description"
+            value={newEvent.description}
+            onChange={handleInputChange}
+            fullWidth
+            margin="normal"
+          />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
             <Button variant="contained" color="primary" onClick={handleSubmit}>
               保存

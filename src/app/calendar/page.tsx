@@ -1,12 +1,23 @@
-import React from 'react';
-import FullCalendar from '@fullcalendar/react';
-import interactionPlugin from '@fullcalendar/interaction';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import listWeek from '@fullcalendar/list';
+"use client"
 
-const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect, handleEventChange }) => {
+import React from 'react'
+import { useFetchEvents } from '@/hooks/useFetchEvents'
+import { useResizeObserver } from '@/hooks/useResizeObserver'
+import useCalendarSettings from '@/hooks/useCalendarSettings'
+import FullCalendar from '@fullcalendar/react'
+import interactionPlugin from '@fullcalendar/interaction'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import listWeek from '@fullcalendar/list'
+
+
+export default function WeeklyCalendar() {
+  const { ref, size } = useResizeObserver();
+  const { slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration } = useCalendarSettings();
+  const events = useFetchEvents()
+
   return (
+      <div ref={ref} className='p-4 w-full h-full'>
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin]}
       initialView="timeGridWeek"
@@ -23,15 +34,11 @@ const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDu
       slotMinTime={slotMinTime}
       slotMaxTime={slotMaxTime}
       events={events}
-      editable={true}
-      selectable={true}
+      editable={false}
+      selectable={false}
       dayMaxEvents={true}
       allDaySlot={false}
       height='auto'
-      eventClick={(clickInfo) => handleEventClick(clickInfo)}
-      select={(selectInfo) => handleDateSelect(selectInfo)}
-      eventDrop={(dropInfo) => handleEventChange(dropInfo)}
-      eventResize={(resizeInfo) => handleEventChange(resizeInfo)}
       eventContent={(arg) => {
         const place = arg.event.extendedProps.place;
         return (
@@ -39,13 +46,11 @@ const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDu
             <b>{arg.event.title}</b>
             {arg.timeText && <div>{arg.timeText}</div>}
             {place && <div>場所：{place}</div>}
-            {arg.event.url && <div>URL：{arg.event.url}</div>}
             {arg.event.extendedProps.description && <div>説明：{arg.event.extendedProps.description}</div>}
           </div>
         );
       }}
     />
-  );
-};
-
-export default CalendarComponent;
+    </div>
+  )
+}

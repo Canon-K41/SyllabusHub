@@ -4,6 +4,7 @@ const initDB = async () => {
   const db = await openDB('SyllabusHub', 1, {
     upgrade(db) {
       db.createObjectStore('calendarSettings', { keyPath: 'key' });
+      db.createObjectStore('calendarEvents', { keyPath: 'id' });
     },
   });
   return db;
