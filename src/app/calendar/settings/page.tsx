@@ -77,10 +77,11 @@ export default function SettingsCalendarPage() {
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewEvent((prevEvent => ({
+    setNewEvent((prevEvent) => ({
       ...prevEvent,
       [name]: value,
-    })));
+    }));
+  }, []);
 
   return (
     <div ref={ref} className='p-4'>
