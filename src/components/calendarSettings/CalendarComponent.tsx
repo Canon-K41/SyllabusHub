@@ -5,7 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listWeek from '@fullcalendar/list';
 
-const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect }) => {
+const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect, handleEventChange }) => {
   return (
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin]}
@@ -30,6 +30,8 @@ const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDu
       height='auto'
       eventClick={(clickInfo) => handleEventClick(clickInfo)}
       select={(selectInfo) => handleDateSelect(selectInfo)}
+      eventDrop={(dropInfo) => handleEventChange(dropInfo)}
+      eventResize={(resizeInfo) => handleEventChange(resizeInfo)}
       eventContent={(arg) => {
         const place = arg.event.extendedProps.place;
         return (
@@ -37,6 +39,7 @@ const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDu
             <b>{arg.event.title}</b>
             {place && <div>場所：{place}</div>}
             {arg.event.url && <div>URL：{arg.event.url}</div>}
+            {arg.event.extendedProps.description && <div>説明：{arg.event.extendedProps.description}</div>}
           </div>
         );
       }}
