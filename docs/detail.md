@@ -9,14 +9,13 @@
 - **iconライブラリ** [iconLibraly](https://tabler.io/icons)
 
 #### 2. ディレクトリ構成
+compotentのディレクトリは共通はcomponentsに、ページ固有のコンポーネントはページのディレクトリに配置する。また、API関連のファイルはapiディレクトリに配置する。
 ```
 /my-class-schedule
 ├── public
 │   ├── manifest.json // PWAのメタデータ
 │   ├── service-worker.js // オフライン対応のService Worker
-│   ├── icons // PWAのアイコン
-│   │   ├── icon-72x72.png
-│   │   └── ... // 他のアイコンファイル
+│   ├── icons // PWAのアイコンfolder
 │   └── ... // その他の公開ファイル
 │
 ├── src
@@ -34,9 +33,9 @@
 │   │       └── userSettings // ユーザー設定
 │   │           └── page.tsx // ユーザー設定ページ
 |   ├── assets
-│   │   ├── HomeIcon.svg // ホームアイコン
-│   |   └── ... // 他のアセットファイル
-│   │
+│   │   ├── icons // アイコンfolder
+│   │   ├── pastExamImages  // 過去の試験画像folder
+│   ├   └── userIcons // ユーザーアイコンfolder
 │   ├── components
 │   │   ├── Calendar
 │   │   │   ├── Calendar.tsx // カレンダーコンポーネント

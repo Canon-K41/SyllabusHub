@@ -5,19 +5,14 @@
 ```typescript
 events: [
   {
-    id: number,
     title: string,
     start: string, //(20[2-9][0-9]|2100)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])
     end: string, //(20[2-9][0-9]|2100)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])
     url: string,
+    description: string,
     backgroundColor: string, //color code
-    borderColor: string, //color code
-    textColor: string, //color code
-    editable: boolean,
-    overlap: boolean,
-    eventDrop: function,  //callback update event info
     extendedProps: {
-      location: string, 
+      place: string, 
     }
   }
 ]
@@ -25,18 +20,43 @@ events: [
 ## 3. データベース設計
 成績テーブルを授業とユーザーの中間テーブルとしても設計するか、それともそれぞれ独立したテーブルとして設計するか検討する必要がある。
 ChashAPIに画像データを保存させるためならURLではなく画像データを保存する必要がある。
+画像はservise workerでキャッシュするため
+Indexを設定することで検索速度を向上させることができる。
+開始日時は`(20[2-9][0-9]|2100)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])`
 ![imae01]:(./test.png)
 
 ### ユーザーテーブル
 | カラム名       | データ型       | 説明             |
 | -------------- | -------------- | ---------------- |
 | user_id        | INT            | 主キー           |
-| email          | VARCHAR(255)   | メールアドレス   |
+| email          | VARCHAR(255)   | メールアドレス (一意制約) |
 | password_hash  | VARCHAR(255)   | パスワードハッシュ|
-| username       | VARCHAR(255)   | ユーザー名       |
+| username       | VARCHAR(100)   | ユーザー名 (一意制約) |
 | role           | VARCHAR(50)    | ロール           |
-| university     | VARCHAR(255)   | 大学名           |
+| university_id  | INT            | 外部キー (大学ID) |
 | profile_image  | VARCHAR(255)   | プロフィール画像URL |
+| created_at     | TIMESTAMP      | 作成日時         |
+| updated_at     | TIMESTAMP      | 更新日時         |
+
+### 大学テーブル
+| カラム名       | データ型       | 説明             |
+| -------------- | -------------- | ---------------- |
+| university_id  | INT            | 主キー           |
+| name           | VARCHAR(255)   | 大学名           |
+| created_at     | TIMESTAMP      | 作成日時         |
+| updated_at     | TIMESTAMP      | 更新日時         |
+
+### 授業テーブル
+| カラム名       | データ型       | 説明             |
+| -------------- | -------------- | ---------------- |
+| class_id       | INT            | 主キー           |
+| title          | VARCHAR(255)   | 授業タイトル     |
+| instructor_id  | INT            | 外部キー (担当員ID) |
+| university_id  | INT            | 外部キー (大学ID) |
+| description    | TEXT           | 授業の説明       |
+| URL            | VARCHAR(255)   | 授業のURL        |
+| start             | VARCHAR(64)      | 開始日時                 |
+| end               | VARCHAR(64) | 終了日時                 |
 | created_at     | TIMESTAMP      | 作成日時         |
 | updated_at     | TIMESTAMP      | 更新日時         |
 
@@ -47,23 +67,6 @@ ChashAPIに画像データを保存させるためならURLではなく画像デ
 | class_id       | INT            | 外部キー (授業ID) |
 | created_at     | TIMESTAMP      | 作成日時         |
 | updated_at     | TIMESTAMP      | 更新日時         |
-
-### 授業テーブル
-| カラム名       | データ型       | 説明             |
-| -------------- | -------------- | ---------------- |
-| class_id       | INT            | 主キー           |
-| title          | VARCHAR(255)   | 授業タイトル     |
-| description    | TEXT           | 授業の説明       |
-| URL            | VARCHAR(255)   | 授業URL          |
-| instructor_id  | INT            | 外部キー (担当員ID) |
-| semester       | VARCHAR(50)    | 学期             |
-| date           | DATE           | 日付             |
-| start_time     | TIME           | 開始時間         |
-| end_time       | TIME           | 終了時間         |
-| location       | VARCHAR(255)   | 授業場所         |
-| created_at     | TIMESTAMP      | 作成日時         |
-| updated_at     | TIMESTAMP      | 更新日時         |
-| university     | VARCHAR(255)   | 開講大学         |
 
 ### 授業とカテゴリーの中間テーブル
 | カラム名       | データ型       | 説明             |
@@ -103,22 +106,14 @@ ChashAPIに画像データを保存させるためならURLではなく画像デ
 | ----------------- | -------------- | ------------------------ |
 | event_id                | INT            | 主キー                   |
 | user_id           | INT            | 外部キー (ユーザーID)    |
-| class_id          | INT            | 外部キー (授業ID), NULL許可 |
 | title             | VARCHAR(255)   | タイトル                 |
 | content           | TEXT           | 内容                     |
-| start             | TIMESTAMP      | 開始日時                 |
-| end               | TIMESTAMP      | 終了日時                 |
+| start             | VARCHAR(64)      | 開始日時                 |
+| end               | VARCHAR(64) | 終了日時                 |
 | url               | VARCHAR(255)   | イベントのURL            |
-| backgroundColor   | VARCHAR(7)     | 背景色 (カラーコード)    |
-| borderColor       | VARCHAR(7)     | 枠線の色 (カラーコード)  |
-| textColor         | VARCHAR(7)     | 文字の色 (カラーコード)  |
-| editable          | BOOLEAN        | 編集可能かどうか         |
-| overlap           | BOOLEAN        | 重複可能かどうか         |
-| eventDrop         | TEXT           | イベント更新のコールバック|
 | location          | VARCHAR(255)   | 場所                     |
 | created_at        | TIMESTAMP      | 作成日時                 |
 | updated_at        | TIMESTAMP      | 更新日時                 |
-| date              | DATE           | 日付                     |
 
 ### 過去問テーブル
 | カラム名       | データ型       | 説明             |
@@ -126,7 +121,8 @@ ChashAPIに画像データを保存させるためならURLではなく画像デ
 | past_exam_id   | INT            | 主キー           |
 | class_id       | INT            | 外部キー (授業ID) |
 | title          | VARCHAR(255)   | タイトル         |
-| tags           | VARCHAR(255)   | タグ             |
+| yaer           | INT            | 年度             |
+| semester       | VARCHAR(50)    | 学期             |
 | image_url      | VARCHAR(255)   | 画像URL          |
 | created_at     | TIMESTAMP      | 作成日時         |
 | updated_at     | TIMESTAMP      | 更新日時         |
@@ -186,8 +182,8 @@ ChashAPIに画像データを保存させるためならURLではなく画像デ
 | created_at     | TIMESTAMP      | 作成日時         |
 | updated_at     | TIMESTAMP      | 更新日時         |
 
-## CashAPIの設計
-### Cache APIで保存するデータ
+## serviseWokerの設計
+### serviseWokerで保存するデータ
 - **静的リソース**:
   - HTMLファイル
   - CSSファイル
@@ -196,13 +192,12 @@ ChashAPIに画像データを保存させるためならURLではなく画像デ
   - フォントファイル
 - **用途**:
   - オフライン時にアプリが動作するようにするため。
-  - ページの読み込み速度を向上させるため。
-  - データと静的ソースは分けて保存するため。気を付けて
 
 ### キャッシュの設計
 静的ファイルや静的
 
 ## IndexedDBの設計
+データは基本IndexedDBに保存してIndexedDB経由でページに表示する。
 JavaScriptのオブジェクトデータベースであるIndexedDBを使ってデータを保存する。
 ### IndexedDBで保存するデータ
 - **構造化データ**:

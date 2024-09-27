@@ -19,3 +19,5 @@ export const handleEventClick = (clickInfo: any) => {
     clickInfo.event.remove()
   }
 }
+  
+
