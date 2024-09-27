@@ -4,8 +4,20 @@ import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listWeek from '@fullcalendar/list';
+import {EventClickArg, DateSelectArg, EventInput, EventDropArg, } from '@fullcalendar/core';
 
-const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect, handleEventChange }) => {
+interface CalendarComponentProps {
+  slotMinTime: string;
+  slotMaxTime: string;
+  slotLabelInterval: string;
+  slotDuration: string;
+  events: EventInput[];
+  handleEventClick: (clickInfo: EventClickArg) => void;
+  handleDateSelect: (selectInfo: DateSelectArg) => void;
+  handleEventChange: (dropInfo: EventDropArg) => void;
+}
+
+const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect, handleEventChange }: CalendarComponentProps) => {
   return (
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin]}
