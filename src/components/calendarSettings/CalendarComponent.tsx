@@ -1,10 +1,10 @@
 import React from 'react';
 import FullCalendar from '@fullcalendar/react';
-import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listWeek from '@fullcalendar/list';
-import {EventClickArg, DateSelectArg, EventInput, EventDropArg, } from '@fullcalendar/core';
+import { EventClickArg, DateSelectArg, EventInput, EventDropArg } from '@fullcalendar/core';
+import interactionPlugin, { EventResizeDoneArg } from '@fullcalendar/interaction';
 
 interface CalendarComponentProps {
   slotMinTime: string;
@@ -14,7 +14,7 @@ interface CalendarComponentProps {
   events: EventInput[];
   handleEventClick: (clickInfo: EventClickArg) => void;
   handleDateSelect: (selectInfo: DateSelectArg) => void;
-  handleEventChange: (dropInfo: EventDropArg) => void;
+  handleEventChange: (info: EventDropArg | EventResizeDoneArg) => void;
 }
 
 const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect, handleEventChange }: CalendarComponentProps) => {
