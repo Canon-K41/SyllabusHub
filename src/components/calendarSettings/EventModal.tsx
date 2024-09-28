@@ -1,7 +1,25 @@
 import React from 'react';
 import { Modal, Box, Typography, TextField, Button } from '@mui/material';
 
-const EventModal = ({ modalIsOpen, closeModal, newEvent, handleInputChange, handleSubmit, deleteEvent }) => {
+interface NewEvent {
+  title: string;
+  start: string;
+  end: string;
+  place: string;
+  url: string;
+  description: string;
+}
+
+interface EventModalProps {
+  modalIsOpen: boolean;
+  closeModal: () => void;
+  newEvent: NewEvent;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: () => void;
+  deleteEvent: () => void;
+}
+
+const EventModal = ({ modalIsOpen, closeModal, newEvent, handleInputChange, handleSubmit, deleteEvent }: EventModalProps) => {
   return (
     <Modal
       open={modalIsOpen}
