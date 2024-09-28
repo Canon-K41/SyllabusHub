@@ -8,6 +8,7 @@ import CalendarComponent from '@/components/calendarSettings/CalendarComponent';
 import useCalendarSettings from '@/hooks/useCalendarSettings';
 import initializeNewEvent from '@/utils/initializeNewEvent';
 import { EventInput, EventClickArg, DateSelectArg, EventDropArg } from '@fullcalendar/core';
+import { EventResizeDoneArg } from '@fullcalendar/interaction';
 
 export default function SettingsCalendarPage() {
   const { ref } = useResizeObserver();
@@ -37,14 +38,14 @@ export default function SettingsCalendarPage() {
     openModal();
   }, [openModal]);
 
-  const handleEventChange = useCallback((dropInfo: EventDropArg) => {
+  const handleEventChange = useCallback((info: EventDropArg | EventResizeDoneArg) => {
     setEvents((prevEvents: EventInput[]) => {
       const updatedEvents = prevEvents.map(event => {
-        if (event.id === dropInfo.event.id) {
+        if (event.id === info.event.id) {
           return {
             ...event,
-            start: dropInfo.event.startStr,
-            end: dropInfo.event.endStr,
+            start: info.event.startStr,
+            end: info.event.endStr,
           };
         }
         return event;
