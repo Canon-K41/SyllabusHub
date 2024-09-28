@@ -38,7 +38,23 @@ export default function SettingsCalendarPage() {
     openModal();
   }, [openModal]);
 
-  const handleEventChange = useCallback((info: EventDropArg | EventResizeDoneArg) => {
+  const handleEventDrop = useCallback((info: EventDropArg) => {
+    setEvents((prevEvents: EventInput[]) => {
+      const updatedEvents = prevEvents.map(event => {
+        if (event.id === info.event.id) {
+          return {
+            ...event,
+            start: info.event.startStr,
+            end: info.event.endStr,
+          };
+        }
+        return event;
+      });
+      return updatedEvents;
+    });
+  }, []);
+
+  const handleEventResize = useCallback((info: EventResizeDoneArg) => {
     setEvents((prevEvents: EventInput[]) => {
       const updatedEvents = prevEvents.map(event => {
         if (event.id === info.event.id) {
@@ -104,7 +120,8 @@ export default function SettingsCalendarPage() {
         events={events}
         handleEventClick={handleEventClick}
         handleDateSelect={handleDateSelect}
-        handleEventChange={handleEventChange}
+        handleEventResize={handleEventResize}
+        handleEventDrop={handleEventDrop}
       />
       <EventModal
         modalIsOpen={modalIsOpen}

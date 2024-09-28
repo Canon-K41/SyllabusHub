@@ -14,17 +14,11 @@ interface CalendarComponentProps {
   events: EventInput[];
   handleEventClick: (clickInfo: EventClickArg) => void;
   handleDateSelect: (selectInfo: DateSelectArg) => void;
-  handleEventChange: (info: EventDropArg | EventResizeDoneArg) => void;
+  handleEventResize: (resizeInfo: EventResizeDoneArg) => void;
+  handleEventDrop: (dropInfo: EventDropArg) => void;
 }
 
-const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect, handleEventChange }: CalendarComponentProps) => {
-  const onEventChange = (info: EventDropArg | EventResizeDoneArg) => {
-    if ('delta' in info) {
-      handleEventChange(info as EventDropArg);
-    } else {
-      handleEventChange(info as EventResizeDoneArg);
-    }
-  };
+const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect, handleEventResize, handleEventDrop}: CalendarComponentProps) => {
 
   return (
     <FullCalendar
@@ -50,8 +44,8 @@ const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDu
       height='auto'
       eventClick={(clickInfo) => handleEventClick(clickInfo)}
       select={(selectInfo) => handleDateSelect(selectInfo)}
-      eventDrop={(dropInfo) => onEventChange(dropInfo)}
-      eventResize={(resizeInfo) => onEventChange(resizeInfo)}
+      eventDrop={(dropInfo) => handleEventDrop(dropInfo)}
+      eventResize={(resizeInfo) => handleEventResize(resizeInfo)}
       eventContent={(arg) => {
         const place = arg.event.extendedProps.place;
         return (
