@@ -1,7 +1,18 @@
 import React from 'react';
 import { TextField, Box } from '@mui/material';
 
-const TimeSettings = ({ slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration }) => {
+interface TimeSettingsProps {
+  slotMinTime: string;
+  setMinTime: (value: string) => void;
+  slotMaxTime: string;
+  setMaxTime: (value: string) => void;
+  slotLabelInterval: string;
+  setSlotLabelInterval: (value: string) => void;
+  slotDuration: string;
+  setSlotDuration: (value: string) => void;
+}
+
+const TimeSettings = ({ slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration }: TimeSettingsProps) => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'right', mb: 2 }}>
       <TextField
