@@ -1,10 +1,10 @@
 import React from 'react';
 import FullCalendar from '@fullcalendar/react';
+import interactionPlugin, { EventResizeDoneArg } from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listWeek from '@fullcalendar/list';
 import { EventClickArg, DateSelectArg, EventInput, EventDropArg } from '@fullcalendar/core';
-import interactionPlugin, { EventResizeDoneArg } from '@fullcalendar/interaction';
 
 interface CalendarComponentProps {
   slotMinTime: string;
@@ -18,6 +18,14 @@ interface CalendarComponentProps {
 }
 
 const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect, handleEventChange }: CalendarComponentProps) => {
+  const onEventChange = (info: EventDropArg | EventResizeDoneArg) => {
+    if ('delta' in info) {
+      handleEventChange(info as EventDropArg);
+    } else {
+      handleEventChange(info as EventResizeDoneArg);
+    }
+  };
+
   return (
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin]}
@@ -42,8 +50,8 @@ const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDu
       height='auto'
       eventClick={(clickInfo) => handleEventClick(clickInfo)}
       select={(selectInfo) => handleDateSelect(selectInfo)}
-      eventDrop={(dropInfo) => handleEventChange(dropInfo)}
-      eventResize={(resizeInfo) => handleEventChange(resizeInfo)}
+      eventDrop={(dropInfo) => onEventChange(dropInfo)}
+      eventResize={(resizeInfo) => onEventChange(resizeInfo)}
       eventContent={(arg) => {
         const place = arg.event.extendedProps.place;
         return (
