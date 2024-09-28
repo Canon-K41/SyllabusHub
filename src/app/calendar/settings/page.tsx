@@ -6,14 +6,16 @@ import EventModal from '@/components/calendarSettings/EventModal';
 import TimeSettings from '@/components/calendarSettings/TimeSettings';
 import CalendarComponent from '@/components/calendarSettings/CalendarComponent';
 import useCalendarSettings from '@/hooks/useCalendarSettings';
+import useCalendarEvents from '@/hooks/useCalendarEvents';
 import initializeNewEvent from '@/utils/initializeNewEvent';
 import { EventInput, EventClickArg, DateSelectArg, EventDropArg } from '@fullcalendar/core';
 import { EventResizeDoneArg } from '@fullcalendar/interaction';
+import DeleteButton from '@/components/test/deleteButton';
 
 export default function SettingsCalendarPage() {
   const { ref } = useResizeObserver();
   const { slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration } = useCalendarSettings();
-  const [events, setEvents] = useState<EventInput[]>([]);
+  const { events, setEvents } = useCalendarEvents();
   const [newEvent, setNewEvent] = useState(initializeNewEvent());
   const [modalIsOpen, setIsOpen] = useState(false);
   const openModal = useCallback(() => setIsOpen(true), []);
@@ -26,9 +28,11 @@ export default function SettingsCalendarPage() {
       title: clickInfo.event.title,
       start: clickInfo.event.startStr,
       end: clickInfo.event.endStr,
-      place: clickInfo.event.extendedProps.place || '',
       url: clickInfo.event.url || '',
-      description: clickInfo.event.extendedProps.description || '',
+      extendedProps: {
+        place: clickInfo.event.extendedProps.place || '',
+        description: clickInfo.event.extendedProps.description || '',
+      },
     });
     openModal();
   }, [openModal]);
@@ -102,6 +106,7 @@ export default function SettingsCalendarPage() {
 
   return (
     <div ref={ref} className='p-4'>
+      <DeleteButton />
       <TimeSettings
         slotMinTime={slotMinTime}
         setMinTime={setMinTime}

@@ -1,9 +1,9 @@
 "use client"
 
 import React from 'react'
-import { useFetchEvents } from '@/hooks/useFetchEvents'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
 import useCalendarSettings from '@/hooks/useCalendarSettings'
+import useCalendarEvents from '@/hooks/useCalendarEvents'
 import FullCalendar from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -14,7 +14,7 @@ import listWeek from '@fullcalendar/list'
 export default function WeeklyCalendar() {
   const { ref } = useResizeObserver();
   const { slotMinTime,  slotMaxTime, slotLabelInterval,  slotDuration, } = useCalendarSettings();
-  const events = useFetchEvents()
+  const { events } =  useCalendarEvents();
 
   return (
       <div ref={ref} className='p-4 w-full h-full'>

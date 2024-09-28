@@ -1,4 +1,5 @@
 import { openDB, deleteDB } from 'idb';
+import { EventInput } from '@fullcalendar/core';
 
 const initDB = async () => {
   const db = await openDB('SyllabusHub', 1, {
@@ -23,6 +24,22 @@ export const getCalendarSetting = async (key: string) => {
   const store = transaction.store;
   const result = await store.get(key);
   return result ? result.value : null;
+};
+
+export const saveCalendarEvent = async (event: EventInput) => {
+  console.log(event);
+  const db = await initDB();
+  const transaction = db.transaction('calendarEvents', 'readwrite');
+  const store = transaction.store;
+  return store.put(event);
+}
+
+export const getCalendarEvents = async () => {
+  const db = await initDB();
+  const transaction = db.transaction('calendarEvents');
+  const store = transaction.store;
+  const result = await store.getAll();
+  return result ? result : [];
 };
 
 export const deleteDatabase = async () => {

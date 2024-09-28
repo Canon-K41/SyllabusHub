@@ -1,19 +1,12 @@
 import React from 'react';
 import { Modal, Box, Typography, TextField, Button } from '@mui/material';
+import {EventInput} from '@fullcalendar/core';
 
-interface NewEvent {
-  title: string;
-  start: string;
-  end: string;
-  place: string;
-  url: string;
-  description: string;
-}
 
 interface EventModalProps {
   modalIsOpen: boolean;
   closeModal: () => void;
-  newEvent: NewEvent;
+  newEvent: EventInput;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: () => void;
   deleteEvent: () => void;

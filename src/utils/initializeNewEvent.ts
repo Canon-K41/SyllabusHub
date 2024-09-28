@@ -1,11 +1,15 @@
-const initializeNewEvent = (start = '', end = '') => ({
+import { EventInput } from '@fullcalendar/core';
+
+const initializeNewEvent = (start: string = '', end: string = ''): EventInput => ({
   id: '',
   title: '',
   start,
   end,
-  place: '',
   url: '',
-  description: '',
+  extendedProps: {
+    place: '',
+    description: '',
+  },
 });
 
 export default initializeNewEvent;
