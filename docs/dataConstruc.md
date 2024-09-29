@@ -5,13 +5,13 @@
 ```typescript
 events: [
   {
+    id: string,
     title: string,
     start: string, //(20[2-9][0-9]|2100)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])
     end: string, //(20[2-9][0-9]|2100)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])
     url: string,
-    description: string,
-    backgroundColor: string, //color code
     extendedProps: {
+      description: string,
       place: string, 
     }
   }
@@ -93,27 +93,6 @@ Indexを設定することで検索速度を向上させることができる。
 | created_at     | TIMESTAMP      | 作成日時         |
 | updated_at     | TIMESTAMP      | 更新日時         |
 
-### ユーザーとスケジュールの中間テーブル
-| カラム名       | データ型       | 説明             |
-| -------------- | -------------- | ---------------- |
-| user_id        | INT            | 外部キー (ユーザーID) |
-| event_id       | INT            | 外部キー (イベントID) |
-| created_at     | TIMESTAMP      | 作成日時         |
-| updated_at     | TIMESTAMP      | 更新日時         |
-
-### 予定テーブル
-| カラム名          | データ型       | 説明                     |
-| ----------------- | -------------- | ------------------------ |
-| event_id                | INT            | 主キー                   |
-| user_id           | INT            | 外部キー (ユーザーID)    |
-| title             | VARCHAR(255)   | タイトル                 |
-| content           | TEXT           | 内容                     |
-| start             | VARCHAR(64)      | 開始日時                 |
-| end               | VARCHAR(64) | 終了日時                 |
-| url               | VARCHAR(255)   | イベントのURL            |
-| location          | VARCHAR(255)   | 場所                     |
-| created_at        | TIMESTAMP      | 作成日時                 |
-| updated_at        | TIMESTAMP      | 更新日時                 |
 
 ### 過去問テーブル
 | カラム名       | データ型       | 説明             |
@@ -220,178 +199,25 @@ JavaScriptのオブジェクトデータベースであるIndexedDBを使って�
 ### IndexedDBの設計
 - **データベース名**: `SyllabusHubDB`
 - **オブジェクトストア**:
-#### ユーザーのJavaScriptオブジェクト
-ユーザーデータを保存するオブジェクトストア 
-使用ユーザーのデータのみを保存する
-```javascript
-const user = {
-    user_id: 1,
-    email: "user@example.com",
-    password_hash: "hashed_password",
-    username: "example_user",
-    role: "student",
-    university: "Example University",
-    profile_image: "https://example.com/profile.jpg",
-    created_at: "2023-01-01T10:00:00",
-    updated_at: "2023-01-01T10:00:00"
-};
+#### calendarSettingsストア
+主キーはkey
+```json
+{ key: 'slotDuration', value: 00:30:00},
+{ key: 'slotLabelInterval', value: 00:01:00},
+{ key: 'slotMinTime', value: '09:00:00' },
+{ key: 'slotMaxTime', value: '21:00:00' },
 ```
-#### スケジュール表示用のJavaScriptオブジェクト
-スケジュール表示用のデータを保存するオブジェクトストア
-使用ユーザーのデータのみを保存する
-```javascript
-const schedule = [
-  {
-    event_id: 1,
-    user_id: 1,
-    class_id: 101,
-    title: "Math Class",
-    content: "Algebra and Geometry",
-    start: "2023-10-01T10:00:00",
-    end: "2023-10-01T12:00:00",
-    url: "https://example.com/math-class",
-    backgroundColor: "#ff0000",
-    borderColor: "#000000",
-    textColor: "#ffffff",
-    editable: true,
-    overlap: false,
-    eventDrop: "function() { console.log('Event dropped'); }",
-    location: "Room 101",
-    created_at: "2023-09-01T10:00:00",
-    updated_at: "2023-09-01T10:00:00",
-    date: "2023-10-01"
-  },
-  // 他のイベントも同様に追加
-];
+#### eventsストア
+主キーはid
+id = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+```json
+{id: 'm1n3jmm8491nl', title: '授業1', start: '2021-09-01T09:00:00', end:'2021-09-01T10:30:00', url: 'https://example.com'.  extendedProps: {description: '授業1の説明', place: '教室1'}},
+{id: 'dfifhu34jfe43', title: '授業2', start: '2021-09-01T10:30:00', end:'2021-09-01T12:00:00', url: 'https://example.com'.  extendedProps: {description: '授業2の説明', place: '教室2'}},
+                                .
+                                .
+                                .
 ```
-#### 通知のJavaScriptオブジェクト
-通知データを保存するオブジェクトストア
-使用ユーザーのデータのみを保存する
-```javascript
-const notifications = [
-  {
-    notification_id: 1,
-    user_id: 1,
-    assignment_id: 101,
-    title: "New Assignment",
-    content: "You have a new assignment due next week.",
-    read: false,
-    created_at: "2023-10-01T10:00:00",
-    updated_at: "2023-10-01T10:00:00"
-  },
-  // 他の通知も同様に追加
-];
-```
-#### 課題のJavaScriptオブジェクト
-課題データを保存するオブジェクトストア
-使用ユーザーのデータのみを保存する
-```javascript
-const assignments = [
-    {
-        assignment_id: 1,
-        class_id: 101,
-        title: "Math Assignment",
-        description: "Solve the problems on page 10.",
-        due_date: "2023-10-10",
-        status: "Not Submitted",
-        created_at: "2023-10-01T10:00:00",
-        updated_at: "2023-10-01T10:00:00"
-    },
-    // 他の課題も同様に追加
-];
-```
-#### カテゴリーのJavaScriptオブジェクト
-カテゴリーデータを保存するオブジェクトストア
-すべでのカテゴリーを保存する
-```javascript
-const categories = [
-    {
-        category_id: 1,
-        name: "Math",
-        description: "Mathematics",
-        created_at: "2023-10-01T10:00:00",
-        updated_at: "2023-10-01T10:00:00"
-    },
-    // 他のカテゴリーも同様に追加
-];
-```
-
-#### 成績のJavaScriptオブジェクト
-成績データを保存するオブジェクトストア
-一旦はユーザーのデータのみを保存する
-```javascript
-const grades = [
-    {
-        grade_id: 1,
-        user_id: 1,
-        class_id: 101,
-        grade: "A",
-        comments: "Excellent performance",
-        created_at: "2023-10-01T10:00:00",
-        updated_at: "2023-10-01T10:00:00"
-    },
-    // 他の成績も同様に追加
-];
-```
-#### 授業のJavaScriptオブジェクト
-授業データを保存するオブジェクトストア
-一旦はユーザーのデータのみを保存する
-```javascript
-const classes = [
-    {
-        class_id: 101,
-        title: "Math Class",
-        description: "Algebra and Geometry",
-        URL: "https://example.com/math-class",
-        instructor_id: 201,
-        semester: "Fall 2023",
-        date: "2023-10-01",
-        start_time: "10:00:00",
-        end_time: "12:00:00",
-        location: "Room 101",
-        created_at: "2023-09-01T10:00:00",
-        updated_at: "2023-09-01T10:00:00",
-        university: "Example University"
-    },
-    // 他の授業も同様に追加
-];
-``` 
-
-#### 過去問のJavaScriptオブジェクト
-過去問データを保存するオブジェクトストア
-微妙
-```javascript
-const past_exams = [
-    {
-        past_exam_id: 1,
-        class_id: 101,
-        title: "Math Exam",
-        tags: "Algebra, Geometry",
-        image_url: "https://example.com/math-exam.jpg",
-        created_at: "2023-10-01T10:00:00",
-        updated_at: "2023-10-01T10:00:00"
-    },
-    // 他の過去問も同様に追加
-];
-```
-
-
-#### コメントのJavaScriptオブジェクト
-コメントデータを保存するオブジェクトストア
-わからん
-```javascript
-const comments = [
-    {
-        comment_id: 1,
-        user_id: 1,
-        target_type: "class",
-        target_id: 101,
-        content: "This class is very interesting.",
-        created_at: "2023-10-01T10:00:00",
-        updated_at: "2023-10-01T10:00:00"
-    },
-    // 他のコメントも同様に追加
-];
-```
-
-
+#### classesストア
+主キーはclass_id
+```json
+{class_id: 1, title: '授業1', instructor_id: 1, university_id: 1, description: '授業1の説明', URL: 'https://example.com', start: '2021-09-01T09:00:00', end: '2021-09-01T10:30:00'},

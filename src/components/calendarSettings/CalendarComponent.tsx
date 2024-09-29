@@ -11,6 +11,7 @@ interface CalendarComponentProps {
   slotMaxTime: string;
   slotLabelInterval: string;
   slotDuration: string;
+  defaultView: string;
   events: EventInput[];
   handleEventClick: (clickInfo: EventClickArg) => void;
   handleDateSelect: (selectInfo: DateSelectArg) => void;
@@ -18,12 +19,12 @@ interface CalendarComponentProps {
   handleEventDrop: (dropInfo: EventDropArg) => void;
 }
 
-const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, events, handleEventClick, handleDateSelect, handleEventResize, handleEventDrop}: CalendarComponentProps) => {
+const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, defaultView, events, handleEventClick, handleDateSelect, handleEventResize, handleEventDrop}: CalendarComponentProps) => {
 
   return (
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin]}
-      initialView="timeGridWeek"
+      initialView={defaultView}
       slotDuration={slotDuration}
       slotLabelInterval={slotLabelInterval}
       slotLabelFormat={{ hour: 'numeric', minute: '2-digit', omitZeroMinute: false, meridiem: 'short' }}

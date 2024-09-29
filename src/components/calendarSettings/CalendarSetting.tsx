@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, Box } from '@mui/material';
+import { TextField, Box, Select, MenuItem } from '@mui/material';
 
 interface TimeSettingsProps {
   slotMinTime: string;
@@ -10,11 +10,23 @@ interface TimeSettingsProps {
   setSlotLabelInterval: (value: string) => void;
   slotDuration: string;
   setSlotDuration: (value: string) => void;
+  defaultView: string;
+  setDefaultView: (value: string) => void;
 }
 
-const TimeSettings = ({ slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration }: TimeSettingsProps) => {
+const CalendarSettings = ({ slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration, defaultView, setDefaultView }: TimeSettingsProps) => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'right', mb: 2 }}>
+      <Select 
+        label="表示形式"
+        value={defaultView}
+        onChange={(e) => setDefaultView(e.target.value)}
+        sx={{ width: 150, marginX: 2 }}
+      >
+        <MenuItem value="timeGridDay">日次</MenuItem>
+        <MenuItem value="timeGridWeek">週間</MenuItem>
+        <MenuItem value="dayGridMonth">月次</MenuItem>
+      </Select>
       <TextField
         label="開始時間"
         type="time"
@@ -71,5 +83,5 @@ const TimeSettings = ({ slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLa
   );
 };
 
-export default TimeSettings;
+export default CalendarSettings;
 

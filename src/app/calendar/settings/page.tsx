@@ -3,18 +3,17 @@
 import React, { useState, useCallback } from 'react';
 import { useResizeObserver } from '@/hooks/useResizeObserver';
 import EventModal from '@/components/calendarSettings/EventModal';
-import TimeSettings from '@/components/calendarSettings/TimeSettings';
+import CalendarSettings from '@/components/calendarSettings/CalendarSetting';
 import CalendarComponent from '@/components/calendarSettings/CalendarComponent';
 import useCalendarSettings from '@/hooks/useCalendarSettings';
 import useCalendarEvents from '@/hooks/useCalendarEvents';
 import initializeNewEvent from '@/utils/initializeNewEvent';
 import { EventInput, EventClickArg, DateSelectArg, EventDropArg } from '@fullcalendar/core';
 import { EventResizeDoneArg } from '@fullcalendar/interaction';
-import DeleteButton from '@/components/test/deleteButton';
 
 export default function SettingsCalendarPage() {
   const { ref } = useResizeObserver();
-  const { slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration } = useCalendarSettings();
+  const { slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration, defaultView, setDefaultView } = useCalendarSettings();
   const { events, setEvents } = useCalendarEvents();
   const [newEvent, setNewEvent] = useState(initializeNewEvent());
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -106,8 +105,7 @@ export default function SettingsCalendarPage() {
 
   return (
     <div ref={ref} className='p-4'>
-      <DeleteButton />
-      <TimeSettings
+      <CalendarSettings
         slotMinTime={slotMinTime}
         setMinTime={setMinTime}
         slotMaxTime={slotMaxTime}
@@ -116,12 +114,15 @@ export default function SettingsCalendarPage() {
         setSlotLabelInterval={setSlotLabelInterval}
         slotDuration={slotDuration}
         setSlotDuration={setSlotDuration}
+        defaultView={defaultView}
+        setDefaultView={setDefaultView}
       />
       <CalendarComponent
         slotMinTime={slotMinTime}
         slotMaxTime={slotMaxTime}
         slotLabelInterval={slotLabelInterval}
         slotDuration={slotDuration}
+        defaultView= {defaultView}
         events={events}
         handleEventClick={handleEventClick}
         handleDateSelect={handleDateSelect}

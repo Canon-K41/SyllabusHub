@@ -6,6 +6,7 @@ const initDB = async () => {
     upgrade(db) {
       db.createObjectStore('calendarSettings', { keyPath: 'key' });
       db.createObjectStore('calendarEvents', { keyPath: 'id' });
+      db.createObjectStore('class', { keyPath: 'id' });
     },
   });
   return db;
@@ -27,7 +28,6 @@ export const getCalendarSetting = async (key: string) => {
 };
 
 export const saveCalendarEvent = async (event: EventInput) => {
-  console.log(event);
   const db = await initDB();
   const transaction = db.transaction('calendarEvents', 'readwrite');
   const store = transaction.store;
