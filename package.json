@@ -16,6 +16,7 @@
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/list": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
+    "@fullcalendar/rrule": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@mui/material": "^6.1.1",
     "@supabase/supabase-js": "^2.45.4",

@@ -211,8 +211,7 @@ JavaScriptのオブジェクトデータベースであるIndexedDBを使って�
 主キーはid
 id = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 ```json
-{id: 'm1n3jmm8491nl', title: '授業1', start: '2021-09-01T09:00:00', end:'2021-09-01T10:30:00', url: 'https://example.com'.  extendedProps: {description: '授業1の説明', place: '教室1'}},
-{id: 'dfifhu34jfe43', title: '授業2', start: '2021-09-01T10:30:00', end:'2021-09-01T12:00:00', url: 'https://example.com'.  extendedProps: {description: '授業2の説明', place: '教室2'}},
+{id: 'm1n3jmm8491nl', title: '授業1', start: '2021-09-01T09:00:00', end:'2021-09-01T10:30:00', url: 'https://example.com'.  extendedProps: {description: '授業1の説明', place: '教室1'} rrule: {freq: 'weekly', interval: 1, byweekday: [1, 3, 5], dtstart: '2021-09-01T09:00:00', until: '2021-12-31T09:00:00'}}, exdata: ['ex1', 'ex2']},
                                 .
                                 .
                                 .
