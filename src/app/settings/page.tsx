@@ -1,11 +1,14 @@
 'use client';
+ 
 import DeleteButton from '@/components/test/deleteButton';
+import React from 'react';
+import ClassForm from '@/components/setting/ClassForm';
 
-export default function Page() {
+export default function SettingPage() {
   return (
-    <div>
+    <>
+      <ClassForm />
       <DeleteButton />
-      <h1 className='right-0 text-gray-700'>change code dirctory</h1>
-    </div>
-  )
+    </>
+  );
 }

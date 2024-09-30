@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Box, Typography, TextField, Button, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Modal, Box, Typography, TextField, Button } from '@mui/material';
 import { EventInput } from '@fullcalendar/core';
 
 interface EventModalProps {
@@ -72,72 +72,6 @@ const EventModal = ({ modalIsOpen, closeModal, newEvent, handleInputChange, hand
             fullWidth
             margin="normal"
           />
-          <Accordion>
-            <AccordionSummary
-              aria-controls="additional-settings-content"
-              id="additional-settings-header"
-            >
-              <Typography>追加設定</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <TextField
-                label="繰り返し"
-                name="freq"
-                value={newEvent.rrule.freq}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="繰り返し回数"
-                name="count"
-                value={newEvent.rrule.count}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="繰り返し間隔"
-                name="interval"
-                value={newEvent.rrule.interval}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="曜日"
-                name="byweekday"
-                value={newEvent.rrule.byweekday}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="開始日"
-                name="dtstart"
-                value={newEvent.rrule.dtstart}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="終了日"
-                name="until"
-                value={newEvent.rrule.until}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="除外日"
-                name="exdate"
-                value={newEvent.exdate}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-              />
-            </AccordionDetails>
-          </Accordion>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
             <Button variant="contained" color="primary" onClick={handleSubmit}>
               保存

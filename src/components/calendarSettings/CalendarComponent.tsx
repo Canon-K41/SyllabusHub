@@ -3,9 +3,9 @@ import FullCalendar from '@fullcalendar/react';
 import interactionPlugin, { EventResizeDoneArg } from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import rrulePlugin from '@fullcalendar/rrule';
 import listWeek from '@fullcalendar/list';
 import { EventClickArg, DateSelectArg, EventInput, EventDropArg } from '@fullcalendar/core';
+import rrulePlugin from '@fullcalendar/rrule';
 
 interface CalendarComponentProps {
   slotMinTime: string;
@@ -24,7 +24,7 @@ const CalendarComponent = ({ slotMinTime, slotMaxTime, slotLabelInterval, slotDu
 
   return (
     <FullCalendar
-      plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin]}
+      plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin ]}
       initialView={defaultView}
       slotDuration={slotDuration}
       slotLabelInterval={slotLabelInterval}

@@ -1,21 +1,23 @@
 "use client"
 
-import React, {  useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
 import useCalendarSettings from '@/hooks/useCalendarSettings'
 import useCalendarEvents from '@/hooks/useCalendarEvents'
-import FullCalendar  from '@fullcalendar/react'
+import FullCalendar from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/interaction'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import listWeek from '@fullcalendar/list'
-import rrulePlugin from '@fullcalendar/rrule'
 import Tooltip from '@mui/material/Tooltip'
+import rrulePlugin from '@fullcalendar/rrule'
+import useClassEvents from '@/hooks/useClassEvents'
 
 export default function WeeklyCalendar() {
   const { ref } = useResizeObserver();
   const { slotMinTime, slotMaxTime, slotLabelInterval, slotDuration, defaultView } = useCalendarSettings();
   const { events } = useCalendarEvents();
+  const { classEvents } = useClassEvents();
   const calendarRef = useRef<FullCalendar>(null);
 
   useEffect(() => {
@@ -23,13 +25,13 @@ export default function WeeklyCalendar() {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.changeView(defaultView);
     }
-  }, [defaultView]); 
+  }, [defaultView]);
 
   return (
     <div ref={ref} className='p-4 w-full h-full'>
       <FullCalendar
         ref={calendarRef}
-        plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin]}
+        plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin, rrulePlugin]}
         initialView={defaultView}
         slotDuration={slotDuration}
         slotLabelInterval={slotLabelInterval}
@@ -43,7 +45,7 @@ export default function WeeklyCalendar() {
         timeZone="Asia/Tokyo"
         slotMinTime={slotMinTime}
         slotMaxTime={slotMaxTime}
-        events={events}
+        events={[...events, ...classEvents]}
         editable={false}
         selectable={false}
         dayMaxEvents={true}

@@ -20,7 +20,6 @@ export default function SettingsCalendarPage() {
   const openModal = useCallback(() => setIsOpen(true), []);
   const closeModal = useCallback(() => setIsOpen(false), []);
 
-
   const handleEventClick = useCallback((clickInfo: EventClickArg) => {
     clickInfo.jsEvent.preventDefault();
     setNewEvent({
@@ -33,15 +32,6 @@ export default function SettingsCalendarPage() {
         place: clickInfo.event.extendedProps.place || '',
         description: clickInfo.event.extendedProps.description || '',
       },
-      rrule: {
-        freq: clickInfo.event.extendedProps.rrules.freq || '',
-        count: clickInfo.event.extendedProps.rrules.count || 0,
-        interval: clickInfo.event.extendedProps.rrules.interval || 0,
-        byweekday: clickInfo.event.extendedProps.rrules.byweekday || [],
-        dtstart: clickInfo.event.extendedProps.rrules.dtstart || '',
-        until: clickInfo.event.extendedProps.rrules.until || '',
-      },
-      exdate: clickInfo.event.extendedProps.exdate || [],
     });
     openModal();
   }, [openModal]);
@@ -115,37 +105,13 @@ export default function SettingsCalendarPage() {
           [name]: value,
         },
       }));
-      return;
-    }else if (name === 'freq' || name === 'count' || name === 'interval' || name === 'dtstart' || name === 'until') {
-      setNewEvent((prevEvent) => ({
-        ...prevEvent,
-        rrule: {
-          ...prevEvent.rrule,
-          [name]: value,
-        },
-      }));
-      return;
-    }else if (name === 'byweekday') {
-      setNewEvent((prevEvent) => ({
-        ...prevEvent,
-        rrule: {
-          ...prevEvent.rrule,
-          [name]: value.split(','),
-        },
-      }));
-      return;
-    }else if (name === 'exdate') {
-      setNewEvent((prevEvent) => ({
-        ...prevEvent,
-        [name]: value.split(','),
-      }));
-      return;
     }
     setNewEvent((prevEvent) => ({
       ...prevEvent,
       [name]: value,
     }));
   }, []);
+  console.log(events);
 
   return (
     <div ref={ref} className='p-4'>
@@ -166,7 +132,7 @@ export default function SettingsCalendarPage() {
         slotMaxTime={slotMaxTime}
         slotLabelInterval={slotLabelInterval}
         slotDuration={slotDuration}
-        defaultView= {defaultView}
+        defaultView={defaultView}
         events={events}
         handleEventClick={handleEventClick}
         handleDateSelect={handleDateSelect}
