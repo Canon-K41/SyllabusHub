@@ -5,7 +5,6 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listWeek from '@fullcalendar/list';
 import { EventClickArg, DateSelectArg, EventInput, EventDropArg } from '@fullcalendar/core';
-import rrulePlugin from '@fullcalendar/rrule';
 
 interface CalendarComponentProps {
   slotMinTime: string;
