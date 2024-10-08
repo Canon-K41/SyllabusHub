@@ -16,8 +16,19 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import HomeIcon from '@mui/icons-material/Home';
+import ClassIcon from '@mui/icons-material/Class';
+import SearchIcon from '@mui/icons-material/Search';
+import Person2Icon from '@mui/icons-material/Person2';
+import SettingsIcon from '@mui/icons-material/Settings';
+import HelpIcon from '@mui/icons-material/Help';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import SchoolIcon from '@mui/icons-material/School';
+import Collapse from '@mui/material/Collapse';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import  Link  from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const drawerWidth = 240;
 
@@ -97,21 +108,55 @@ interface MiniDrawerProps {
 const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [isSearchOpen, setSearchOpen] = React.useState(false);
+  const [isHelpOpen, setHelpOpen] = React.useState(false);
+  const pathname = usePathname();
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
   const handleDrawerClose = () => {
     setOpen(false);
+    setSearchOpen(false);
+    setHelpOpen(false);
   };
+
+  const handleSearchClick = () => {
+    if (!isSearchOpen) {
+      setOpen(true);
+    }
+    setSearchOpen(!isSearchOpen);
+  };
+
+  const handleHelpClick = () => {
+    if (!isSearchOpen) {
+      setOpen(true);
+    }
+    setHelpOpen(!isHelpOpen);
+  };
+
+  const sidebarContents = [
+    { text: 'Home', icon: <HomeIcon /> },
+    { text: 'MyClass', icon: <ClassIcon /> },
+    { text: 'Calendar', icon: <CalendarMonthIcon /> },
+    { 
+      text: 'Search', 
+      icon: <SearchIcon />,
+      children: [
+        { text: 'Class', icon: <SchoolIcon /> },
+        { text: 'Teacher', icon: <Person2Icon /> },
+      ]
+    },
+    { text: 'Setting', icon: <SettingsIcon /> },
+    { text: 'Help', icon: <HelpIcon /> },
+  ]
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
@@ -121,76 +166,185 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
               ...(open && { display: 'none' }),
             }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+            SyllabusHub
           </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+          <List>
+            <Link href="/" >
+              <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === '/' ? 'lightgray' : 'white'  }} >
+                <ListItemButton
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
                 }}
               >
-                <ListItemIcon
+                  <ListItemIcon
                   sx={{
                     minWidth: 0,
                     mr: open ? 3 : 'auto',
                     justifyContent: 'center',
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
+                    {<HomeIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={'Hoem'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+
+            <Link href="/myclass">
+              <ListItem disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
                 }}
               >
-                <ListItemIcon
+                  <ListItemIcon
                   sx={{
                     minWidth: 0,
                     mr: open ? 3 : 'auto',
                     justifyContent: 'center',
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    {<ClassIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={'MyClass'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+
+
+            <Link href="/calendar">
+              <ListItem disablePadding sx={{ display: 'block' , bgcolor: pathname === '/calendar' ? 'lightgray' : 'white'}}>
+                <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                  <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                    {<CalendarMonthIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={'Calendar'} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+
+            <Divider />
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              onClick={handleSearchClick}
+            >
+                <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                  {<SearchIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={'Search'} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
+              <Collapse in={isSearchOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <SchoolIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Class" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+              <Collapse in={isSearchOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <Person2Icon />
+                    </ListItemIcon>
+                    <ListItemText primary="Teacher" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
             </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        {children}
+
+            <ListItem disablePadding sx={{ display: 'block' }}>
+              <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              onClick={handleHelpClick}
+            >
+                <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                  {<HelpIcon />}
+                </ListItemIcon>
+                <ListItemText primary={'Help'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+              <Collapse in={isHelpOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <QuestionAnswerIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="FAQ" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+              <Collapse in={isHelpOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>
+                      <ContactMailIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Contact" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+            </ListItem>
+
+            <Divider />
+          </List>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <DrawerHeader />
+          {children}
+        </Box>
       </Box>
-    </Box>
   );
-};
+}
 
 export default MiniDrawer;
