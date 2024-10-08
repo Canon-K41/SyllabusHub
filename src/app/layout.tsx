@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Sidebar from '@/components/layout/Sidebar';
 import Header from '@/components/layout/Header';
 import useWindowResize from '@/hooks/useWindowResize';
+import MinDrawer from '@/ui/Drower';
 import clsx from 'clsx';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -24,15 +25,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <div className="min-h-screen bg-gray-100">
-          <Sidebar isOpen={isOpen} />
-          <Header toggleSidebar={() => setIsOpen(!isOpen)} />
-          <div className={clsx("pt-16 transition-all duration-200 flex-col fixed", isOpen ? "w-[calc(100%-14rem)] ml-56" : "w-full")}>
-            <div className="h-screen overflow-auto">
-              {children}
-            </div>
-          </div>
+          <MinDrawer>{children}</MinDrawer>
         </div>
       </body>
     </html>
   );
 }
+//<Sidebar isOpen={isOpen} />
+//  <Header toggleSidebar={() => setIsOpen(!isOpen)} />
+//        <div className={clsx("pt-16 transition-all duration-200 flex-col fixed", isOpen ? "w-[calc(100%-14rem)] ml-56" : "w-full")}>
+//          <div className="h-screen overflow-auto">
