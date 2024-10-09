@@ -29,6 +29,7 @@ import ContactMailIcon from '@mui/icons-material/ContactMail';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import  Link  from 'next/link';
 import { usePathname } from 'next/navigation';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const drawerWidth = 240;
 
@@ -154,7 +155,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-        <AppBar position="fixed" open={open}>
+        <AppBar position="fixed" open={open} >
           <Toolbar>
             <IconButton
             color="inherit"
@@ -337,11 +338,31 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
             </ListItem>
 
             <Divider />
+
+            <ListItem disablePadding sx={{ display: 'block' , bgcolor: pathname === '' ? 'light' : 'white'}}>
+              <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+            >
+                <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                  {<AccountCircleIcon />}
+                </ListItemIcon>
+                <ListItemText primary={'アカウント'} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Drawer>
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <DrawerHeader />
-          {children}
+        <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 1, mt: 8  }}>
+            {children}
         </Box>
       </Box>
   );
