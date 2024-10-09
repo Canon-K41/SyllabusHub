@@ -114,8 +114,8 @@ export default function SettingsCalendarPage() {
   console.log(events);
 
   return (
-    <div ref={ref} className='p-4'>
-      <CalendarSettings
+      <div ref={ref} >
+        <CalendarSettings
         slotMinTime={slotMinTime}
         setMinTime={setMinTime}
         slotMaxTime={slotMaxTime}

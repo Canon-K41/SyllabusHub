@@ -1,3 +1,4 @@
+//setting pathname & Link
 import * as React from 'react';
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -27,9 +28,13 @@ import SchoolIcon from '@mui/icons-material/School';
 import Collapse from '@mui/material/Collapse';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
-import  Link  from 'next/link';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import PreviewIcon from '@mui/icons-material/Preview';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 const drawerWidth = 240;
 
@@ -108,54 +113,79 @@ interface MiniDrawerProps {
 
 const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [isSidebarOpen, setSidebarOpen] = React.useState(false);
   const [isSearchOpen, setSearchOpen] = React.useState(false);
   const [isHelpOpen, setHelpOpen] = React.useState(false);
+  const [isCalendarOpen, setCalendarOpen] = React.useState(false);
   const pathname = usePathname();
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setSidebarOpen(true);
   };
   const handleDrawerClose = () => {
-    setOpen(false);
+    setSidebarOpen(false);
     setSearchOpen(false);
     setHelpOpen(false);
+    setCalendarOpen(false);
   };
 
-  const handleSearchClick = () => {
-    if (!isSearchOpen) {
+  const handleClick = (isOpen: boolean, setOpen: (arg0: boolean) => void) => { 
+    if (isOpen) {
+      setOpen(false);
+    } else {
+      setSidebarOpen(true);
       setOpen(true);
     }
-    setSearchOpen(!isSearchOpen);
   };
 
-  const handleHelpClick = () => {
-    if (!isSearchOpen) {
-      setOpen(true);
-    }
-    setHelpOpen(!isHelpOpen);
-  };
+  const menuItems = [
+    { href: "/", text: "Home", icon: <HomeIcon /> },
+    { href: "/myclass", text: "MyClass", icon: <ClassIcon /> },
+  ];
 
-  const sidebarContents = [
-    { text: 'Home', icon: <HomeIcon /> },
-    { text: 'MyClass', icon: <ClassIcon /> },
-    { text: 'Calendar', icon: <CalendarMonthIcon /> },
-    { 
-      text: 'Search', 
-      icon: <SearchIcon />,
-      children: [
-        { text: 'Class', icon: <SchoolIcon /> },
-        { text: 'Teacher', icon: <Person2Icon /> },
-      ]
+  const menuLists = [
+    {
+      href: "/calendar",
+      text: "Calendar",
+      icon: <CalendarMonthIcon />,
+      subItems: [
+        { href: "/calendar/view", text: "View", icon: <PreviewIcon /> },
+        { href: "/calendar/edit", text: "Edit", icon: <EditCalendarIcon /> },
+      ],
+      isOpen: isCalendarOpen,
+      setOpen: setCalendarOpen,
     },
-    { text: 'Setting', icon: <SettingsIcon /> },
-    { text: 'Help', icon: <HelpIcon /> },
-  ]
+    {
+      href: "/search",
+      text: "Search",
+      icon: <SearchIcon />,
+      subItems: [
+        { href: "/search/class", text: "Class", icon: <SchoolIcon /> },
+        { href: "/search/teacher", text: "Teacher", icon: <Person2Icon /> },
+      ],
+      isOpen: isSearchOpen,
+      setOpen: setSearchOpen,
+    },
+    {
+      href: "/help",
+      text: "Help",
+      icon: <HelpIcon />,
+      subItems: [
+        { href: "/help/faq", text: "FAQ", icon: <QuestionAnswerIcon /> },
+        { href: "/help/contact", text: "Contact", icon: <ContactMailIcon /> },
+      ],
+      isOpen: isHelpOpen,
+      setOpen: setHelpOpen,
+    },
+  ];
+
+
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-        <AppBar position="fixed" open={open} >
+
+        <AppBar position="fixed" open={isSidebarOpen}>
           <Toolbar>
             <IconButton
             color="inherit"
@@ -164,7 +194,7 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
             edge="start"
             sx={{
               marginRight: 5,
-              ...(open && { display: 'none' }),
+              ...(isSidebarOpen && { display: 'none' }),
             }}
           >
               <MenuIcon />
@@ -174,198 +204,117 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
           </Typography>
           </Toolbar>
         </AppBar>
-        <Drawer variant="permanent" open={open}>
+
+        <Drawer variant="permanent" open={isSidebarOpen}>
+
           <DrawerHeader>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </IconButton>
           </DrawerHeader>
+
           <Divider />
+
           <List>
-            <Link href="/" >
-              <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === '/' ? 'lightgray' : 'white'  }} >
-                <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                  <ListItemIcon
+
+            {menuItems.map((item, index) => (
+              <Link href={item.href} key={index}>
+                <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === item.href ? 'lightgray' : 'white' }}>
+                  <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
+                    minHeight: 48,
+                    justifyContent: isSidebarOpen ? 'initial' : 'center',
+                    px: 2.5,
                   }}
                 >
-                    {<HomeIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={'Hoem'} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-            </Link>
+                    <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: isSidebarOpen ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={item.text} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+                </Link>
+            ))}
 
-            <Link href="/myclass">
-              <ListItem disablePadding sx={{ display: 'block' }}>
-                <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                  <ListItemIcon
+            {menuLists.map((item, index) => (
+              <React.Fragment key={index}>
+                <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname.includes(item.href) && !item.isOpen ? 'lightgray' : 'white' }}>
+                  <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
+                    minHeight: 48,
+                    justifyContent: isSidebarOpen ? 'initial' : 'center',
+                    px: 2.5,
                   }}
+                  onClick={() => handleClick(item.isOpen, item.setOpen)}
                 >
-                    {<ClassIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={'MyClass'} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-
-
-            <Link href="/calendar">
-              <ListItem disablePadding sx={{ display: 'block' , bgcolor: pathname === '/calendar' ? 'lightgray' : 'white'}}>
-                <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                  <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                    {<CalendarMonthIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={'Calendar'} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-
-            <Divider />
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-              }}
-              onClick={handleSearchClick}
-            >
-                <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                  {<SearchIcon />}
-                </ListItemIcon>
-                <ListItemText primary={'Search'} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-              <Collapse in={isSearchOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }}>
-                    <ListItemIcon>
-                      <SchoolIcon />
+                    <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: isSidebarOpen ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                      {item.icon}
                     </ListItemIcon>
-                    <ListItemText primary="Class" />
+                    <ListItemText primary={item.text} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
+                    {isSidebarOpen ? (item.isOpen ? <ExpandLess /> : <ExpandMore />) : null}
                   </ListItemButton>
-                </List>
-              </Collapse>
-              <Collapse in={isSearchOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }}>
-                    <ListItemIcon>
-                      <Person2Icon />
-                    </ListItemIcon>
-                    <ListItemText primary="Teacher" />
-                  </ListItemButton>
-                </List>
-              </Collapse>
-            </ListItem>
-
-            <ListItem disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
-                px: 2.5,
-              }}
-              onClick={handleHelpClick}
-            >
-                <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                  {<HelpIcon />}
-                </ListItemIcon>
-                <ListItemText primary={'Help'} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-              <Collapse in={isHelpOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }}>
-                    <ListItemIcon>
-                      <QuestionAnswerIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="FAQ" />
-                  </ListItemButton>
-                </List>
-              </Collapse>
-              <Collapse in={isHelpOpen} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }}>
-                    <ListItemIcon>
-                      <ContactMailIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Contact" />
-                  </ListItemButton>
-                </List>
-              </Collapse>
-            </ListItem>
+                  {item.subItems && (
+                    <Collapse in={item.isOpen} timeout="auto" unmountOnExit>
+                      {item.subItems.map((subItem, subIndex) => (
+                        <Link href={subItem.href} key={subIndex}>
+                          <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === subItem.href ? 'lightgray' : 'white' }}>
+                            <ListItemButton sx={{ pl: 4 }}>
+                              <ListItemIcon>{subItem.icon}</ListItemIcon>
+                              <ListItemText primary={subItem.text} />
+                            </ListItemButton>
+                          </ListItem>
+                          </Link>
+                      ))}
+                      </Collapse>
+                  )}
+                </ListItem>
+                </React.Fragment>
+            ))}
 
             <Divider />
 
-            <ListItem disablePadding sx={{ display: 'block' , bgcolor: pathname === '' ? 'light' : 'white'}}>
+            <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === '' ? 'light' : 'white' }}>
               <ListItemButton
               sx={{
                 minHeight: 48,
-                justifyContent: open ? 'initial' : 'center',
+                justifyContent: isSidebarOpen ? 'initial' : 'center',
                 px: 2.5,
               }}
             >
                 <ListItemIcon
                 sx={{
                   minWidth: 0,
-                  mr: open ? 3 : 'auto',
+                  mr: isSidebarOpen ? 3 : 'auto',
                   justifyContent: 'center',
                 }}
               >
-                  {<AccountCircleIcon />}
+                  <AccountCircleIcon />
                 </ListItemIcon>
-                <ListItemText primary={'アカウント'} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={'アカウント'} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           </List>
+
         </Drawer>
-        <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 1, mt: 8  }}>
-            {children}
+
+        <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 1, mt: 8 }}>
+          {children}
         </Box>
+
       </Box>
   );
-}
+};
 
 export default MiniDrawer;

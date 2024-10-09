@@ -13,8 +13,6 @@ import Tooltip from '@mui/material/Tooltip'
 import rrulePlugin from '@fullcalendar/rrule'
 import useClassEvents from '@/hooks/useClassEvents'
 import '@/styles/toolbar.css'
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
-import Bottun from '@mui/material/Button';
 
 export default function WeeklyCalendar() {
   const { ref } = useResizeObserver();
@@ -32,7 +30,6 @@ export default function WeeklyCalendar() {
 
   return (
     <div ref={ref} >
-      <Bottun variant="contained" color="primary" startIcon={<EditCalendarIcon />} href="/calendar/edit">カレンダー編集</Bottun>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, listWeek, interactionPlugin, rrulePlugin]}
