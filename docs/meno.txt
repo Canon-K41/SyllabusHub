@@ -1,3 +1,4 @@
+moodleから授業情報を取得するcanpasmateでの授業情報の詳細取得方法
 必要なデータ
 Event
     - イベントID
