@@ -1,11 +1,12 @@
 import { loginToMoodle } from '@/utils/loginToMoodle';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
+  if (req.method !== 'POST') {
+    return NextResponse.json({ error: 'Method Not Allowed' }, { status: 405 });
+  }
 
-  const { searchParams } = new URL(req.url);
-  const username = searchParams.get('username');
-  const password = searchParams.get('password');
+  const { username, password } = await req.json();
 
   if (!username || !password) {
     return NextResponse.json({ error: 'Username and password are required' }, { status: 400 });
