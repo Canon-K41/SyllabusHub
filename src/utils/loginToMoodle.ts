@@ -1,19 +1,6 @@
 import { chromium } from 'playwright';
-import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
-  if (req.method !== 'GET') {
-    return NextResponse.json({ error: 'Method Not Allowed' }, { status: 405 });
-  }
-
-  const { searchParams } = new URL(req.url);
-  const username = searchParams.get('username');
-  const password = searchParams.get('password');
-
-  if (!username || !password) {
-    return NextResponse.json({ error: 'Username and password are required' }, { status: 400 });
-  }
-
+export async function loginToMoodle(username: string, password: string) {
   const browser = await chromium.launch();
   const context = await browser.newContext({
     httpCredentials: {
@@ -38,14 +25,10 @@ export async function GET(req: NextRequest) {
     await page.waitForLoadState('networkidle', { timeout: 60000 });
     console.log('ログイン後のページを確認しました。');
 
-    const H1 = await page.$eval('h1', (el) => el.textContent);
-    // 追加の操作を記述
-    return NextResponse.json({ message: H1 });
-
+    return { browser, page };
   } catch (error) {
-    console.error(`Error occurred: ${error}`);
-    return NextResponse.json({ error: 'An error occurred while scraping the page' }, { status: 500 });
-  } finally {
     await browser.close();
+    throw error;
   }
 }
+
