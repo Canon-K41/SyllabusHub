@@ -7,10 +7,20 @@ import CalendarSettings from '@/components/calendarSettings/CalendarSetting';
 import CalendarComponent from '@/components/calendarSettings/CalendarComponent';
 import useCalendarSettings from '@/hooks/useCalendarSettings';
 import useCalendarEvents from '@/hooks/useCalendarEvents';
-import initializeNewEvent from '@/utils/initializeNewEvent';
 import { EventInput, EventClickArg, DateSelectArg, EventDropArg } from '@fullcalendar/core';
 import { EventResizeDoneArg } from '@fullcalendar/interaction';
 
+const initializeNewEvent = (startStr = '', endStr = '') => ({
+  id: '',
+  title: '',
+  start: startStr,
+  end: endStr,
+  url: '',
+  extendedProps: {
+    place: '',
+    description: '',
+  },
+});
 export default function SettingsCalendarPage() {
   const { ref } = useResizeObserver();
   const { slotMinTime, setMinTime, slotMaxTime, setMaxTime, slotLabelInterval, setSlotLabelInterval, slotDuration, setSlotDuration, defaultView, setDefaultView } = useCalendarSettings();
@@ -55,7 +65,7 @@ export default function SettingsCalendarPage() {
       });
       return updatedEvents;
     });
-  }, []);
+  }, [setEvents]);
 
   const handleEventResize = useCallback((info: EventResizeDoneArg) => {
     setEvents((prevEvents: EventInput[]) => {
@@ -71,7 +81,7 @@ export default function SettingsCalendarPage() {
       });
       return updatedEvents;
     });
-  }, []);
+  }, [setEvents]);
 
   const handleSubmit = useCallback(() => {
     if (newEvent.id === '') {
@@ -88,12 +98,12 @@ export default function SettingsCalendarPage() {
       }
     });
     closeModal();
-  }, [newEvent, closeModal]);
+  }, [newEvent, closeModal, setEvents]);
 
   const deleteEvent = useCallback(() => {
     setEvents((prevEvents: EventInput[]) => prevEvents.filter(event => event.id !== newEvent.id));
     closeModal();
-  }, [newEvent.id, closeModal]);
+  }, [newEvent.id, closeModal, setEvents]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -110,7 +120,7 @@ export default function SettingsCalendarPage() {
       ...prevEvent,
       [name]: value,
     }));
-  }, []);
+  }, [setNewEvent]);
   console.log(events);
 
   return (

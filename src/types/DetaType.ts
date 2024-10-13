@@ -1,3 +1,4 @@
+
 export interface classData{
   class_id: string,
   title: string,
@@ -16,3 +17,13 @@ export interface classData{
   }
 }
 
+
+export interface userInfo{ 
+  moodleAccount: string,
+  password: string,
+  nickname: string,
+  grade: string,
+  faculty: string,
+  course: string,
+}
+  

@@ -21,7 +21,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import ClassIcon from '@mui/icons-material/Class';
 import SearchIcon from '@mui/icons-material/Search';
 import Person2Icon from '@mui/icons-material/Person2';
-import SettingsIcon from '@mui/icons-material/Settings';
 import HelpIcon from '@mui/icons-material/Help';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import SchoolIcon from '@mui/icons-material/School';
@@ -286,6 +285,8 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
             <Divider />
 
             <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === '' ? 'light' : 'white' }}>
+            <Link href="/settings">
+                <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === '/settings'? 'lightgray' : 'white' }}>
               <ListItemButton
               sx={{
                 minHeight: 48,
@@ -304,6 +305,8 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
                 </ListItemIcon>
                 <ListItemText primary={'アカウント'} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
               </ListItemButton>
+              </ListItem>
+              </Link>
             </ListItem>
           </List>
 

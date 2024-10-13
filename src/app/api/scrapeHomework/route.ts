@@ -1,4 +1,4 @@
-import { loginToMoodle } from '@/utils/loginToMoodle';
+import { loginToMoodle } from '@/utils/login/loginToMoodle';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {

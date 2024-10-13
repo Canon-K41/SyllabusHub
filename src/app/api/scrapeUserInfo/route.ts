@@ -1,4 +1,4 @@
-import { loginToCampasmate } from '@/utils/loginToCampasmate';
+import { loginToCampasmate } from '@/utils/login/loginToCampasmate';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
       userName: userName,
       studentId: studentId,
     };
+    console.log(userInfo);
 
     await browser.close();
     return NextResponse.json({ userInfo });

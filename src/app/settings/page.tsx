@@ -1,14 +1,9 @@
-'use client';
- 
-import DeleteButton from '@/components/test/deleteButton';
-import React from 'react';
-import ClassForm from '@/components/setting/ClassForm';
+'use client'
+import RegistrationForm from '@/ui/register/RegistrationForm';
 
-export default function SettingPage() {
+export default function RegistrationPage() {
   return (
-    <>
-      <ClassForm />
-      <DeleteButton />
-    </>
+    <RegistrationForm />
   );
+
 }

@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 
-
 export function useResizeObserver() {
   const ref = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
+    const currentRef = ref.current;
+    if (!currentRef) return;
+
     const handleResize = (entries: ResizeObserverEntry[]) => {
       for (const entry of entries) {
-        if (entry.target === ref.current) {
+        if (entry.target === currentRef) {
           setSize({
             width: entry.contentRect.width,
             height: entry.contentRect.height,
@@ -18,15 +20,10 @@ export function useResizeObserver() {
     };
 
     const resizeObserver = new ResizeObserver(handleResize);
-
-    if (ref.current) {
-      resizeObserver.observe(ref.current);
-    }
+    resizeObserver.observe(currentRef);
 
     return () => {
-      if (ref.current) {
-        resizeObserver.unobserve(ref.current);
-      }
+      resizeObserver.unobserve(currentRef);
     };
   }, []);
 

@@ -1,8 +1,8 @@
 'use client'
 
 import "@/styles/globals.css";
-import { CssBaseline, Drawer, ThemeProvider, createTheme } from '@mui/material';
-import MinDrawer from '@/ui/Drower';
+import { CssBaseline,  ThemeProvider, createTheme } from '@mui/material';
+import MinDrawer from '@/ui/layout/Drower';
 const theme = createTheme();
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
