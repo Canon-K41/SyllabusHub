@@ -28,16 +28,26 @@ export async function POST(req: NextRequest) {
     console.log('ページを確認しました');
 
     // 宿題の内容を取得
-    const Homework = await page.$eval('div[class="pb-2"]', (el) => el.innerHTML);
-    if (!Homework) {
+    const homeworkList = await page.$$eval('div[class="list-group list-group-flush"]', rows => {
+      return rows.map(row => {
+        const links = row.querySelectorAll('a[title]');
+        return Array.from(links).map(link => {
+          const anchor = link as HTMLAnchorElement;
+          return {
+            text: anchor.textContent?.trim() || '',
+            href: anchor.href || '',
+            label: anchor.getAttribute('aria-label') || ''
+          };
+        });
+      }).flat();
+    });
+
+    if (!homeworkList || homeworkList.length === 0) {
       throw new Error('Failed to get homework');
     }
-    await browser.close();
-    console.log(Homework);
 
-    return new Response(Homework, {
-      headers: { 'Content-Type': 'text/html' },
-    });
+    await browser.close();
+    return NextResponse.json({ homework: homeworkList }, { status: 200 });
   } catch (error) {
     console.error(`Error occurred: ${error}`);
     return NextResponse.json({ error: 'An error occurred while scraping the page' }, { status: 500 });
