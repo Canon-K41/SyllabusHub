@@ -33,10 +33,17 @@ export async function POST(req: NextRequest) {
         const links = row.querySelectorAll('a[title]');
         return Array.from(links).map(link => {
           const anchor = link as HTMLAnchorElement;
+          const classInfo = anchor.getAttribute('aria-label')?.split(' の ')[0] || '';
+          if(classInfo === '提出物をアップロード・入力する') {
+            return null;
+          }
+          const homeworkTitle = anchor.getAttribute('aria-label')?.split(' 活動は ')[0].replace(classInfo, '').replace(' の ', '') || '';
+          const deadline = anchor.getAttribute('aria-label')?.replace('が期限です。', '').split(' 活動は ')[1] || '';
           return {
-            text: anchor.textContent?.trim() || '',
             href: anchor.href || '',
-            label: anchor.getAttribute('aria-label') || ''
+            classInfo: classInfo,
+            homeworkTitle: homeworkTitle,
+            deadline: deadline,
           };
         });
       }).flat();
