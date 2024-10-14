@@ -1,37 +1,39 @@
 import { loginToMoodle } from '@/utils/login/loginToMoodle';
+import { Page } from 'playwright';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface Link {
   year: string | null;
   term: string | null;
-  weekOfDate: string | null;
   weekOfDateParts: string[];
   cleanTitle: string | null;
   instructor: string | null;
   url: string | null;
 }
 
-async function scrapeLinks(page: any): Promise<Link[]> {
-  return await page.$$eval('div.dashboard-card', (links: Element[]) => {
+async function scrapeLinks(page: Page): Promise<Link[]> {
+  const links = await page.$$eval('div.dashboard-card', (links: Element[]) => {
     return links.map(link => {
       const textContent = link.querySelector('span.sr-only')?.textContent?.trim() || null;
-      const year = textContent?.split('・')[0].split('年度')[0];
-      const term = textContent?.split('・')[0].split('年度')[1];
-      const weekOfDate = textContent?.split('・')[1];
-      const title = textContent?.split('・')[2];
+      const year = textContent?.split('・')[0].split('年度')[0] || null;
+      const term = textContent?.split('・')[0].split('年度')[1] || null;
+      const weekOfDate = textContent?.split('・')[1] || null;
+      const title = textContent?.split('・')[2] || null;
       const url = link.querySelector('a')?.href || null;
-      if (!term || !weekOfDate || !title || !url) {
+      const instructorMatch = title?.match(/（([^）]+)）$/) || null;
+      const instructor = instructorMatch ? instructorMatch[1] : null;
+
+      if (!term || !weekOfDate || !title || !url || !year || !instructor) {
         return null;
       }
-
       const weekOfDateParts = weekOfDate.match(/([月火水木金土日](?:\(\d+,\d+\)|\d+))/g) || [];
-      const instructorMatch = title.match(/（([^）]+)）$/);
-      const instructor = instructorMatch ? instructorMatch[1] : null;
       const cleanTitle = title.replace(/（([^）]+)）$/, '');
 
-      return { year, term, weekOfDateParts, cleanTitle, instructor, url };
-    });
+      return { year, term,  weekOfDateParts, cleanTitle, instructor, url };
+    }).filter(link => link !== null) as Link[];
   });
+
+  return links;
 }
 
 export async function POST(req: NextRequest) {
@@ -60,9 +62,8 @@ export async function POST(req: NextRequest) {
     }
 
     const Links = await scrapeLinks(page);
-    const filteredLink = Links.filter(link => link !== null);
     await browser.close();
-    return NextResponse.json({ ...filteredLink });
+    return NextResponse.json({ ...Links });
   } catch (error) {
     console.error(`Error occurred: ${error}`);
     return NextResponse.json({ error: 'An error occurred while scraping the page' }, { status: 500 });
