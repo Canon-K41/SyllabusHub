@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
             deadline: deadline,
           };
         });
-      }).flat();
+      }).filter(row => row !== null).flat();
     });
 
     if (!homeworkList || homeworkList.length === 0) {

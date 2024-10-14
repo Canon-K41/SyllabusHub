@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
 
     const Links = await scrapeLinks(page);
     await browser.close();
-    return NextResponse.json({ ...Links });
+    return NextResponse.json({ Links });
   } catch (error) {
     console.error(`Error occurred: ${error}`);
     return NextResponse.json({ error: 'An error occurred while scraping the page' }, { status: 500 });

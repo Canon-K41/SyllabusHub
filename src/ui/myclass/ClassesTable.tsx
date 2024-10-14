@@ -21,14 +21,14 @@ const theme = createTheme({
 });
 
 const statusColors = {
-  notStarted: '#FFA500',
+  cancellation: '#FFA500',
   inProgress: '#4169E1',
   completed: '#32CD32',
   failed: '#FF0000',
 };
 
 const statusLabels = {
-  notStarted: '未開始',
+  Cancellation: 'キャンセル',
   inProgress: '進行中',
   completed: '完了',
   failed: '不合格',
@@ -108,8 +108,8 @@ export default function CourseTableMUIDetailed() {
       grade: "Ｒ",
       year: "2023",
       term: "夏学期",
-      courseCode: "KED-KES1111J",
-      studentId: "23535305",
+      fieldCode: "KED-KES1111J",
+      courseId: "23535305",
       instructor: "藤井　慎介",
       date: "2023/08/18",
       status: 'completed',
@@ -132,8 +132,8 @@ export default function CourseTableMUIDetailed() {
       grade: "Ｓ",
       year: "2023",
       term: "後",
-      courseCode: "KED-ICL1131J",
-      studentId: "23531702",
+      fieldCode: "KED-ICL1131J",
+      courseId: "23531702",
       instructor: "大橋　浩",
       date: "2024/02/20",
       status: 'inProgress',
@@ -164,7 +164,7 @@ export default function CourseTableMUIDetailed() {
     if (editingCourse) {
       setCourses(
         courses.map((c) =>
-          c.courseCode === editingCourse.courseCode ? editingCourse : c
+          c.fieldCode === editingCourse.fieldCode ? editingCourse : c
         )
       );
       setOpenDialog(false);
@@ -208,7 +208,7 @@ export default function CourseTableMUIDetailed() {
           </TableHead>
           <TableBody>
             {courses.map((course) => (
-              <Row key={course.courseCode} row={course} onEdit={handleEdit} />
+              <Row key={course.fieldCode} row={course} onEdit={handleEdit} />
             ))}
           </TableBody>
         </Table>

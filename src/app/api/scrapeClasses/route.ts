@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     console.log('gradeページを確認しました');
 
     // 複数の要素を取得
-    const classes = await page.$$eval('tr.column_odd', rows => {
+    const classes = await page.$$eval('tr.column_odd', (rows: Element[]) => {
       return rows.map(row => {
         const cells = row.querySelectorAll('td');
         return {
@@ -33,16 +33,18 @@ export async function POST(req: NextRequest) {
           grade: cells[2].textContent?.trim() || null,
           year: cells[4].textContent?.trim() || null,
           term: cells[5].textContent?.trim() || null,
-          courseCode: cells[6].textContent?.trim() || null,
-          studentId: cells[7].textContent?.trim() || null,
+          fieldCode: cells[6].textContent?.trim() || null,
+          courseId: cells[7].textContent?.trim() || null,
           instructor: cells[8].textContent?.trim() || null,
           date: cells[9].textContent?.trim() || null,
         };
       });
     });
 
+    const filteredClasses = classes.filter(row => row !== null);
+
     await browser.close();
-    return NextResponse.json({ classes });
+    return NextResponse.json({ classes: filteredClasses });
   } catch (error) {
     console.error(`Error occurred: ${error}`);
     return NextResponse.json({ error: 'An error occurred while scraping the page' }, { status: 500 });

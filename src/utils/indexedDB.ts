@@ -1,6 +1,6 @@
 import { openDB, deleteDB } from 'idb';
 import { EventInput } from '@fullcalendar/core';
-import { classData, userInfo } from '@/types/DetaType';
+import { ClassData, UserInfo } from '@/types/type';
 
 const initDB = async () => {
   const db = await openDB('SyllabusHub', 1, {
@@ -46,7 +46,7 @@ export const getCalendarEvents = async () => {
 };
 
 
-export const saveClass = async (classData:  classData ) => {
+export const saveClass = async (classData:  ClassData ) => {
   const db = await initDB();
   const transaction = db.transaction('class', 'readwrite');
   const store = transaction.store;
@@ -61,19 +61,19 @@ export const getClass = async () => {
   return result ? result : [];
 }
 
-export const saveUserInfo = async (userInfo: userInfo) => {
+export const saveUserInfo = async (userInfo: UserInfo) => {
   const db = await initDB();
   const transaction = db.transaction('userInfo', 'readwrite');
   const store = transaction.store;
   return store.put(userInfo);
 };
 
-export const getUserInfo = async () => {
+export const getUserInfo = async (): Promise<UserInfo | null> => {
   const db = await initDB();
   const transaction = db.transaction('userInfo');
   const store = transaction.store;
   const result = await store.getAll();
-  return result ? result : [];
+  return result && result.length > 0 ? result[0] : null;
 }
 
 export const deleteDatabase = async () => {

@@ -17,36 +17,21 @@ export interface Course {
   grade: string;
   year: string;
   term: string;
-  courseCode: string;
-  studentId: string;
+  fieldCode: string;
+  courseId: string;
   instructor: string;
   date: string;
-  status: 'notStarted' | 'inProgress' | 'completed' | 'failed';
-  notifications?: string;
+  status: 'cancellation' | 'inProgress' | 'completed' | 'failed';
   attendances: Attendance[];
   assignments: Assignment[];
 }
 
-export interface classData{
-  class_id: string,
-  title: string,
-  instructor: string,
-  university: string,
-  description: string,
-  url: string,
-  duration: string,
-  exdata: string[],
-  rrule: {
-    freq: string,
-    interval: number,
-    count: number,
-    byweekday: string[],
-    dtstart: string,
-  }
+export interface ClassData extends Course{
+  url: string | null;
+  dayOfWeek: string[];
 }
 
-
-export interface userInfo{ 
+export interface UserInfo{ 
   moodleAccount: string,
   password: string,
   nickname: string,
