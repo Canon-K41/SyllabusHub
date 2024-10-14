@@ -32,7 +32,8 @@
     "playwright": "^1.48.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-modal": "^3.16.1"
+    "react-modal": "^3.16.1",
+    "recharts": "^2.13.0"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
@@ -40,6 +41,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-modal": "^3.16.3",
+    "@types/recharts": "^1.8.29",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
     "postcss": "^8",

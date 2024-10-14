@@ -1,6 +1,8 @@
 'use client';
 import ClassesTable from "@/ui/myclass/ClassesTable";
 import HomeworkList from "@/ui/home/HomeworkList";
+import NextClass from "@/ui/home/NextEvent";
+import EnhancedGradeAnalysis from "@/ui/myclass/Grade";
 
 export default function MyClassPage() {
   const homework = [
@@ -35,8 +37,19 @@ export default function MyClassPage() {
             "deadline": "2024年 10月 21日 17:00 "
         }
   ];
+const classInfo = {
+  year: "2024",
+  term: "後期",
+  weekOfDateParts: ["月(3,4)", "木(3,4)"],
+  cleanTitle: "電気情報工学基礎実験",
+  instructor: "佐々　滉太",
+  url: "https://moodle.s.kyushu-u.ac.jp/course/view.php?id=60235"
+};
+
   return (
     <>
+      <NextClass classInfo={classInfo} />
+      <EnhancedGradeAnalysis />
       <HomeworkList homework={homework} />
       <ClassesTable />
     </>
