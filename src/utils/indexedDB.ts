@@ -61,6 +61,7 @@ export const getClassData = async () => {
   return result ? result : [];
 }
 
+
 export const saveUserInfo = async (userInfo: UserInfo) => {
   const db = await initDB();
   const transaction = db.transaction('userInfo', 'readwrite');

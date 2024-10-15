@@ -18,7 +18,6 @@ export interface ClassData {
   year: string;
   term: string;
   instructor: string;
-  date: string;
   description: string;
   url: string | null;
   dayOfWeek: string[];

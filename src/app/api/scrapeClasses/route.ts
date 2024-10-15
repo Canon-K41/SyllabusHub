@@ -34,7 +34,6 @@ export async function POST(req: NextRequest) {
           year: cells[4].textContent?.trim() || null,
           term: cells[5].textContent?.trim() || null,
           instructor: cells[8].textContent?.trim() || null,
-          date: cells[9].textContent?.trim() || null,
         };
       });
     });

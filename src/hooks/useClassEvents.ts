@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
-import { getClass } from '@/utils/indexedDB';
-import { classData } from '@/types/DetaType';
+import { getClassData } from '@/utils/indexedDB';
+import { ClassData } from '@/types/type';
 
 const useClassEvents = () => {
-  const [classEvents, setClassEvents] = useState<classData[]>([]);
+  const [classEvents, setClassEvents] = useState<ClassData[]>([]);
 
   const loadClassEvents = useCallback(async () => {
-    const classes = await getClass();
+    const classes = await getClassData();
     const classEvents = classes.map((classData) => {
       if (classData.rrule && classData.rrule.freq) {
         return {
@@ -30,7 +30,7 @@ const useClassEvents = () => {
       return null; // Return null for invalid objects
     }).filter(event => event !== null); // Filter out null values
 
-    setClassEvents(classEvents as classData[]);
+    setClassEvents(classEvents as ClassData[]);
   }, []);
 
   useEffect(() => {

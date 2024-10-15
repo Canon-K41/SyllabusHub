@@ -33,9 +33,7 @@ export const toClassData = async (): Promise<ClassData[]> => {
     if(!classItem.instructor) {
       classItem.instructor = '?';
     }
-    if(!classItem.date) {
-      classItem.date = '?';
-    }
+
     if(!classItem.term) {
       classItem.term = '?';
     }
