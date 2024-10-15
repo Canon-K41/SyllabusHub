@@ -1,18 +1,22 @@
 import { loginToMoodle } from '@/utils/login/loginToMoodle';
 import { Page } from 'playwright';
 import { NextRequest, NextResponse } from 'next/server';
-
-interface Link {
-  year: string | null;
-  term: string | null;
-  weekOfDateParts: string[];
-  cleanTitle: string | null;
-  instructor: string | null;
-  url: string | null;
-}
+import { Link } from '@/types/type';
 
 async function scrapeLinks(page: Page): Promise<Link[]> {
   const links = await page.$$eval('div.dashboard-card', (links: Element[]) => {
+    console.log('Can chatch links');
+    function removeNestedParentheses(input: string): string {
+      let result = input;
+      while (true) {
+        let newResult = result.replace(/（[^（）]*）/g, '');
+        if (newResult === result) {
+          break;
+        }
+        result = newResult;
+      }
+      return result.replace(/\s+/g, ' ').trim();
+    }
     return links.map(link => {
       const textContent = link.querySelector('span.sr-only')?.textContent?.trim() || null;
       const year = textContent?.split('・')[0].split('年度')[0] || null;
@@ -27,9 +31,14 @@ async function scrapeLinks(page: Page): Promise<Link[]> {
         return null;
       }
       const weekOfDateParts = weekOfDate.match(/([月火水木金土日](?:\(\d+,\d+\)|\d+))/g) || [];
-      const cleanTitle = title.replace(/（([^）]+)）$/, '');
-
-      return { year, term,  weekOfDateParts, cleanTitle, instructor, url };
+      const cleanTitle = removeNestedParentheses(title);
+      const cleanTitles = cleanTitle.split(/[,，]/);
+      cleanTitles.forEach((cleanTitle, index) => {
+        if (cleanTitle.length === 1) {
+          cleanTitles[index] = cleanTitles[index - 1].slice(0, -1) + cleanTitles[index];
+        }
+      });
+      return { year, term, weekOfDateParts, cleanTitles, instructor, url };
     }).filter(link => link !== null) as Link[];
   });
 

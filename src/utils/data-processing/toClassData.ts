@@ -1,31 +1,13 @@
 import { callClassInfo } from '@/utils/callApi/callClassInfo';
-import { ClassData } from '@/types/type';
-
-function expandSubjectNames(input: string): string {
-  const numerals: { [key: string]: string[] } = {
-    'Ⅰ,Ⅱ': ['Ⅰ', 'Ⅱ'],
-    'Ⅱ,Ⅲ': ['Ⅱ', 'Ⅲ'],
-    // 必要に応じて他の組み合わせを追加
-  };
-
-  const match = input.match(/^(.+?)([Ⅰ-Ⅻ],[Ⅰ-Ⅻ])(?:\((.+)\))?$/);
-
-  if (match) {
-    const [, courseName, numeralPair, suffix] = match;
-    const expandedNumerals = numerals[numeralPair] || numeralPair.split(',');
-
-    return expandedNumerals
-      .map(numeral => `${courseName}${numeral}${suffix ? `（${suffix}）` : ''}`)
-      .join('、');
-  }
-
-  return input;
-}
+import { ClassData, Link } from '@/types/type';
 
 type Status = 'cancellation' | 'inProgress' | 'completed' | 'failed';
 
 export const toClassData = async (): Promise<ClassData[]> => {
-  const { moodleLinkData, campasmateClassData, homeworkData } = await callClassInfo();
+  const { moodleLinkData, campasmateClassData } = await callClassInfo();
+  if(moodleLinkData === null || campasmateClassData === null) {
+    throw new Error('Data could not be retrieved.Try again later.');
+  }
 
   // campasmateClassDataが配列であることを保証
   const campasmateClassArray = Array.isArray(campasmateClassData) ? campasmateClassData : [];
@@ -45,28 +27,23 @@ export const toClassData = async (): Promise<ClassData[]> => {
     classData.push({
       ...classItem,
       status,
+      description: '',
       attendances: [],
       assignments: [],
     });
   });
-  console.log(classData);
 
-  classData.forEach(classItem => {
-    for (const link of moodleLinkData) {
-      const cleanTitle = expandSubjectNames(link.cleanTitle);
-      if (cleanTitle.includes(classItem.courseName)) {
-        classItem.url = link.url;
-        classItem.dayOfWeek = link.weekOfDateParts;
-      }else{
-        classItem.url = null;
-        classItem.dayOfWeek = [];
+
+  classData.forEach((classItem) => {
+    moodleLinkData.forEach((moodleLink: Link) => {
+      if (moodleLink.cleanTitles?.includes(classItem.courseName)) { 
+        classItem.url = moodleLink.url;
+        classItem.dayOfWeek = moodleLink.weekOfDateParts;
       }
-      if(classItem.instructor === null){
-        classItem.instructor = link.instructor;
-      }
-    }
+    });
   });
-  console.log(classData);
+
+  console.log("Final class data:", classData);
 
   return classData;
 };

@@ -6,7 +6,7 @@ import { calculateAttendanceRate } from '@/utils/myclass/calculateAttendanceRate
 import AttendanceDetails from './AttendanceDetails';
 import AssignmentDetails from './AssignmentDetails';
 import EditCourseDialog from './EditCourseDialog';
-import { Course } from '@/types/type';
+import { ClassData } from '@/types/type';
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -28,13 +28,13 @@ const statusColors = {
 };
 
 const statusLabels = {
-  Cancellation: 'キャンセル',
+  cancellation: 'キャンセル',
   inProgress: '進行中',
   completed: '完了',
   failed: '不合格',
 };
 
-function Row({ row, onEdit }: { row: Course; onEdit: (course: Course) => void }) {
+function Row({ row, onEdit }: { row: ClassData; onEdit: (course: ClassData) => void }) {
   const [open, setOpen] = useState(false);
 
   const today = new Date().toISOString().split('T')[0];
@@ -101,9 +101,12 @@ function Row({ row, onEdit }: { row: Course; onEdit: (course: Course) => void })
 }
 
 export default function CourseTableMUIDetailed() {
-  const [courses, setCourses] = useState<Course[]>([
+  const [courses, setCourses] = useState<ClassData[]>([
     {
       courseName: "基幹教育セミナー",
+      description: "基幹教育セミナーは、学部・学科を超えた異なる専門分野の知識や技術を総合的に学び、問題解決能力を養うことを目的としています。",
+      url: "https://moodle.s.kyushu-u.ac.jp/course/view.php?id=12345",
+      dayOfWeek: ["月3", "木1"],
       credits: "1",
       grade: "Ｒ",
       year: "2023",
@@ -128,6 +131,9 @@ export default function CourseTableMUIDetailed() {
     },
     {
       courseName: "課題協学科目",
+      description: "課題協学科目は、学部・学科を超えた異なる専門分野の知識や技術を総合的に学び、問題解決能力を養うことを目的としています。",
+      url: "https://moodle.s.kyushu-u.ac.jp/course/view.php?id=23456",
+      dayOfWeek: ["火2", "金4"],
       credits: "2.5",
       grade: "Ｓ",
       year: "2023",
@@ -152,10 +158,10 @@ export default function CourseTableMUIDetailed() {
     },
   ]);
 
-  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [editingCourse, setEditingCourse] = useState<ClassData | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const handleEdit = (course: Course) => {
+  const handleEdit = (course: ClassData) => {
     setEditingCourse({ ...course });
     setOpenDialog(true);
   };

@@ -11,7 +11,7 @@ export interface Assignment {
   maxScore: number;
 }
 
-export interface Course {
+export interface ClassData {
   courseName: string;
   credits: string;
   grade: string;
@@ -21,17 +21,18 @@ export interface Course {
   courseId: string;
   instructor: string;
   date: string;
+  description: string;
+  url: string | null;
+  dayOfWeek: string[];
   status: 'cancellation' | 'inProgress' | 'completed' | 'failed';
   attendances: Attendance[];
   assignments: Assignment[];
 }
 
-export interface ClassData extends Course{
-  url: string | null;
-  dayOfWeek: string[];
-}
 
 export interface UserInfo{ 
+  userName: string,
+  studentId: string,
   moodleAccount: string,
   password: string,
   nickname: string,
@@ -40,3 +41,12 @@ export interface UserInfo{
   course: string,
 }
   
+export interface Link {
+  year: string | null;
+  term: string | null;
+  weekOfDateParts: string[];
+  cleanTitles: string[] | null;
+  instructor: string | null;
+  url: string | null;
+}
+

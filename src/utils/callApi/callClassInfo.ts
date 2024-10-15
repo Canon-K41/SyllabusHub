@@ -24,20 +24,10 @@ export const callClassInfo = async () => {
     },
     body: JSON.stringify({ username: accountName, password: password }),
   });
-  const homeworkResponse = await fetch('/api/scrapeHomework', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ username: accountName, password: password }),
-  });
-
   const moodleLinkData = (await moodleLinkResponse.json()).Links;
   const campasmateClassJson = await campasmateClassResponse.json();
-  console.log(campasmateClassJson); // ここでレスポンスの構造を確認
   const campasmateClassData = campasmateClassJson.classes; // 正しいプロパティ名を使用
-  const homeworkData = (await homeworkResponse.json()).homework;
   
-  console.log(moodleLinkData, campasmateClassData, homeworkData);
-  return { moodleLinkData, campasmateClassData, homeworkData };
+  console.log(moodleLinkData, campasmateClassData );
+  return { moodleLinkData, campasmateClassData };
 }

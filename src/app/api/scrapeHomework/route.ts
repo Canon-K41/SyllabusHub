@@ -29,6 +29,19 @@ export async function POST(req: NextRequest) {
 
     // 宿題の内容を取得
     const homeworkList = await page.$$eval('div[class="list-group list-group-flush"]', rows => {
+
+      function removeNestedParentheses(input: string): string {
+        let result = input;
+        while (true) {
+          let newResult = result.replace(/（[^（）]*）/g, '');
+          if (newResult === result) {
+            break;
+          }
+          result = newResult;
+        }
+        return result.replace(/\s+/g, ' ').trim();
+      }
+
       return rows.map(row => {
         const links = row.querySelectorAll('a[title]');
         return Array.from(links).map(link => {
@@ -39,9 +52,22 @@ export async function POST(req: NextRequest) {
           }
           const homeworkTitle = anchor.getAttribute('aria-label')?.split(' 活動は ')[0].replace(classInfo, '').replace(' の ', '') || '';
           const deadline = anchor.getAttribute('aria-label')?.replace('が期限です。', '').split(' 活動は ')[1] || '';
+
+          const title = classInfo.split('・')[2] || '';
+          const cleanTitle = removeNestedParentheses(title);
+          const cleanTitles = cleanTitle.split(/[,，]/);
+          cleanTitles.forEach((cleanTitle, index) => {
+            if (cleanTitle.length === 1) {
+              cleanTitles[index] = cleanTitles[index - 1].slice(0, -1) + cleanTitles[index];
+            }
+          });
+          if(!anchor.href || !classInfo || !cleanTitles || !homeworkTitle || !deadline) {
+            return null;
+          }
           return {
             href: anchor.href || '',
             classInfo: classInfo,
+            cleanTitles: cleanTitles,
             homeworkTitle: homeworkTitle,
             deadline: deadline,
           };
@@ -54,7 +80,9 @@ export async function POST(req: NextRequest) {
     }
 
     await browser.close();
-    return NextResponse.json({ homework: homeworkList }, { status: 200 });
+    const HomeworkList = homeworkList.filter(homework => homework !== null);
+    console.log(HomeworkList);
+    return NextResponse.json({ homework: HomeworkList }); 
   } catch (error) {
     console.error(`Error occurred: ${error}`);
     return NextResponse.json({ error: 'An error occurred while scraping the page' }, { status: 500 });

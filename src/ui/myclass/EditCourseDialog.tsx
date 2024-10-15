@@ -1,12 +1,12 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControl, InputLabel, Select, MenuItem, Typography, Box } from '@mui/material';
-import { Course } from '@/types/type';
+import { ClassData } from '@/types/type';
 
 interface EditCourseDialogProps {
   open: boolean;
   onClose: () => void;
   onSave: () => void;
-  course: Course | null;
+  course: ClassData | null;
   onAttendanceChange: (index: number, field: string, value: string) => void;
   onAssignmentChange: (index: number, field: string, value: string) => void;
 }

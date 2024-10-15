@@ -16,15 +16,19 @@ export const useRegistrationForm = () => {
     const fetchPassword = async () => {
       try {
         const userInfo = await getUserInfo();
-        setFormData((prevData) => ({
-          ...prevData,
-          moodleAccount: userInfo[0]?.moodleAccount || '',
-          password: userInfo[0]?.password || '',
-          nickname: userInfo[0]?.nickname || '',
-          grade: userInfo[0]?.grade || '',
-          faculty: userInfo[0]?.faculty || '',
-          course: userInfo[0]?.course || '',
-        }));
+        if (userInfo && Array.isArray(userInfo) && userInfo.length > 0) {
+          setFormData((prevData) => ({
+            ...prevData,
+            moodleAccount: userInfo[0]?.moodleAccount || '',
+            password: userInfo[0]?.password || '',
+            nickname: userInfo[0]?.nickname || '',
+            grade: userInfo[0]?.grade || '',
+            faculty: userInfo[0]?.faculty || '',
+            course: userInfo[0]?.course || '',
+          }));
+        } else {
+          console.error('User info is null or not an array');
+        }
       } catch (error) {
         console.error('Failed to fetch user info:', error);
       }
