@@ -6,9 +6,19 @@ export interface Attendance {
 export interface Assignment {
   name: string;
   dueDate: string;
+  href: string;
   submittedDate: string | null;
+  status: 'delated' | 'submitted' | 'unsubmitted';
   score: number | null;
   maxScore: number;
+}
+
+export interface HomeworkItem {
+  href: string;
+  classInfo: string;
+  cleanTitles: string;
+  homeworkTitle: string;
+  deadline: string;
 }
 
 export interface ClassData {

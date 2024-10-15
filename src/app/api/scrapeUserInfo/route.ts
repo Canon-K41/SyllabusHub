@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
       userName: userName,
       studentId: studentId,
     };
-    console.log(userInfo);
 
     await browser.close();
     return NextResponse.json({ userInfo });

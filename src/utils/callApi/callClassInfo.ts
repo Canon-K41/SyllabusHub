@@ -10,6 +10,7 @@ export const callClassInfo = async () => {
 
   const accountName = userDetails.moodleAccount;
   const password = userDetails.password;
+
   const moodleLinkResponse = await fetch('/api/scrapeMoodleLink', {
     method: 'POST',
     headers: {
@@ -17,6 +18,8 @@ export const callClassInfo = async () => {
     },
     body: JSON.stringify({ username: accountName, password: password }),
   });
+  console.log('finished scraping moodle link');
+
   const campasmateClassResponse = await fetch('/api/scrapeClasses', {
     method: 'POST',
     headers: {
@@ -24,6 +27,8 @@ export const callClassInfo = async () => {
     },
     body: JSON.stringify({ username: accountName, password: password }),
   });
+  console.log('finished scraping campasmate class');
+
   const moodleLinkData = (await moodleLinkResponse.json()).Links;
   const campasmateClassJson = await campasmateClassResponse.json();
   const campasmateClassData = campasmateClassJson.classes; // 正しいプロパティ名を使用

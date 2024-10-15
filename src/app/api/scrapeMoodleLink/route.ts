@@ -5,7 +5,6 @@ import { Link } from '@/types/type';
 
 async function scrapeLinks(page: Page): Promise<Link[]> {
   const links = await page.$$eval('div.dashboard-card', (links: Element[]) => {
-    console.log('Can chatch links');
     function removeNestedParentheses(input: string): string {
       let result = input;
       while (true) {
@@ -58,12 +57,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const { browser, page } = await loginToMoodle(username, password);
-    console.log('ログイン成功');
 
     try {
       await page.click('a[href="https://moodle.s.kyushu-u.ac.jp/my/courses.php"]');
       await page.waitForLoadState('networkidle', { timeout: 60000 });
-      console.log('ページを確認しました');
     } catch (pageError) {
       console.error(`ページ操作エラー: ${pageError}`);
       await browser.close();

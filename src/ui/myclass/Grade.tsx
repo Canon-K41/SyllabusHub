@@ -15,20 +15,29 @@ export default function EnhancedGradeAnalysis() {
       const data = await getClassData();
       setClassData(data);
     })();
-  }, [classData]);
+  }, []);
 
-  const [yearTermFilters, setYearTermFilters] = useState<{ [year: string]: string[] }>({});
   const [tabValue, setTabValue] = useState(0);
 
   const years = useMemo(() => [...new Set(classData.map(item => item.year))], [classData]);
   const terms = useMemo(() => [...new Set(classData.map(item => item.term))], [classData]);
 
+
+
+  const initialYearTermFilters: { [year: string]: string[] } = years.reduce((acc, year) => {
+    acc[year] = [...terms];
+    return acc;
+  }, {} as { [year: string]: string[] });
+  const [yearTermFilters, setYearTermFilters] = useState<{ [year: string]: string[] }>(initialYearTermFilters);
+
+  console.log(yearTermFilters);
   const filteredData = useMemo(() => {
     return classData.filter(item => {
       const yearFilters = yearTermFilters[item.year];
       return !yearFilters || yearFilters.length === 0 || yearFilters.includes(item.term);
     });
   }, [classData, yearTermFilters]);
+
 
   const { totalCredits, averageGPA, gradeDistribution, termGPA } = useMemo(() => {
     let totalCredits = 0;
@@ -41,7 +50,7 @@ export default function EnhancedGradeAnalysis() {
       totalCredits += credits;
       gradeCount[item.grade] += credits;
 
-      if (item.grade !== 'Ｒ') {
+      if (item.credits !== '?') {
         const points = credits * (gradeToGPA[item.grade] || 0);
         totalGradePoints += points;
 
@@ -112,8 +121,8 @@ export default function EnhancedGradeAnalysis() {
                     key={`${year}-${term}`}
                     control={
                       <Checkbox
-                        checked={yearTermFilters[year]?.includes(term) || false}
                         onChange={() => handleTermFilterChange(year, term)}
+                        defaultChecked={true}
                       />
                     }
                     label={term}
@@ -144,6 +153,7 @@ export default function EnhancedGradeAnalysis() {
                 <TableCell align="center">科目名</TableCell>
                 <TableCell align="center">年度</TableCell>
                 <TableCell align="center">学期</TableCell>
+                <TableCell align="center">編集</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

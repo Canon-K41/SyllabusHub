@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Box, 
   Card, 
@@ -8,19 +8,20 @@ import {
   Chip
 } from '@mui/material';
 import { Assignment, Class, Schedule } from '@mui/icons-material';
+import { callHomework } from '@/utils/callApi/callHomework';
+import { HomeworkItem } from '@/types/type';
 
-interface HomeworkItem {
-  href: string;
-  classInfo: string;
-  homeworkTitle: string;
-  deadline: string;
-}
+export default function HomeworkList() {
+  const [homework, setHomework] = useState<HomeworkItem[]>([]);
 
-interface HomeworkListProps {
-  homework?: (HomeworkItem | null)[];
-}
+  useMemo(() => {
+    async function fetchHomework() {
+      const data = await callHomework();
+      setHomework(data);
+    }
+    fetchHomework();
+  }, []);
 
-export default function HomeworkList({ homework = [] }: HomeworkListProps) {
   if (!homework || homework.length === 0) {
     return (
       <Box sx={{ p: 3 }}>

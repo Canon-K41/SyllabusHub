@@ -44,7 +44,7 @@ export const toClassData = async (): Promise<ClassData[]> => {
       classItem.description = '未設定';
     }
     if(!classItem.url) {
-      classItem.url = '未設定';
+      classItem.url = '';
     }
     if(!classItem.dayOfWeek) {
       classItem.dayOfWeek = [];

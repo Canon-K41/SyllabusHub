@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
 
     await page.click('a[title="成績照会"]');
     await page.waitForLoadState('networkidle', { timeout: 60000 });
-    console.log('gradeページを確認しました');
 
     // 複数の要素を取得
     const classes = await page.$$eval('tr.column_odd', (rows: Element[]) => {

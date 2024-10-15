@@ -3,7 +3,7 @@ import { IconButton, TableCell, TableRow, Collapse, Box, Typography, Chip, Table
 import { Edit as EditIcon, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import AttendanceDetails from '@/ui/myclass/AttendanceDetails';
 import AssignmentDetails from '@/ui/myclass/AssignmentDetails';
-import CourseEditor from './CourseEditor';
+import CourseEditor from '@/ui/myclass/CourseEditor';
 import { calculateAttendanceRate } from '@/utils/myclass/calculateAttendanceRate';
 import { gradeColors, statusColors, statusLabels } from '@/types/constants';
 import { ClassData } from '@/types/type';
