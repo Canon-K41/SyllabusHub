@@ -33,8 +33,6 @@ export async function POST(req: NextRequest) {
           grade: cells[2].textContent?.trim() || null,
           year: cells[4].textContent?.trim() || null,
           term: cells[5].textContent?.trim() || null,
-          fieldCode: cells[6].textContent?.trim() || null,
-          courseId: cells[7].textContent?.trim() || null,
           instructor: cells[8].textContent?.trim() || null,
           date: cells[9].textContent?.trim() || null,
         };

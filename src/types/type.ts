@@ -17,8 +17,6 @@ export interface ClassData {
   grade: string;
   year: string;
   term: string;
-  fieldCode: string;
-  courseId: string;
   instructor: string;
   date: string;
   description: string;

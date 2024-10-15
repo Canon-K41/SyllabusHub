@@ -1,11 +1,12 @@
 import { callClassInfo } from '@/utils/callApi/callClassInfo';
+import { saveClassData } from '@/utils/indexedDB';
 import { ClassData, Link } from '@/types/type';
 
 type Status = 'cancellation' | 'inProgress' | 'completed' | 'failed';
 
 export const toClassData = async (): Promise<ClassData[]> => {
   const { moodleLinkData, campasmateClassData } = await callClassInfo();
-  if(moodleLinkData === null || campasmateClassData === null) {
+  if(!moodleLinkData || !campasmateClassData ) {
     throw new Error('Data could not be retrieved.Try again later.');
   }
 
@@ -18,16 +19,42 @@ export const toClassData = async (): Promise<ClassData[]> => {
     let status: Status = 'completed';
     if (!classItem.grade) {
       status = 'inProgress';
-    } else if (classItem.grade === 'F') {
+    } else if (classItem.grade === 'Ｆ') {
       status = 'failed';
-    } else if (classItem.grade === 'W') {
+    } else if (classItem.grade === 'Ｗ') {
       status = 'cancellation';
+    }
+    if(!classItem.credits) {
+      classItem.credits = '?';
+    }
+    if(!classItem.grade) {
+      classItem.grade = '?';
+    }
+    if(!classItem.instructor) {
+      classItem.instructor = '?';
+    }
+    if(!classItem.date) {
+      classItem.date = '?';
+    }
+    if(!classItem.term) {
+      classItem.term = '?';
+    }
+    if(!classItem.year) {
+      classItem.year = '?';
+    }
+    if(!classItem.description) {
+      classItem.description = '未設定';
+    }
+    if(!classItem.url) {
+      classItem.url = '未設定';
+    }
+    if(!classItem.dayOfWeek) {
+      classItem.dayOfWeek = [];
     }
 
     classData.push({
       ...classItem,
       status,
-      description: '',
       attendances: [],
       assignments: [],
     });
@@ -45,5 +72,8 @@ export const toClassData = async (): Promise<ClassData[]> => {
 
   console.log("Final class data:", classData);
 
+  classData.forEach((classItem) => {
+    saveClassData(classItem);
+  });
   return classData;
 };

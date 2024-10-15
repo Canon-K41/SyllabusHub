@@ -3,11 +3,11 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Container, Typography,  MenuItem, FormGroup, FormControlLabel, Checkbox, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { saveClass } from '@/utils/indexedDB';
-import { classData } from '@/types/DetaType';
+import { saveClassData } from '@/utils/indexedDB';
+import { ClassData } from '@/types/type';
 
 const ClassForm = () => {
-  const [formData, setFormData] = useState<classData>({
+  const [formData, setFormData] = useState<ClassData>({
     class_id: '',
     title: '',
     instructor: '',
@@ -96,7 +96,7 @@ const ClassForm = () => {
     e.preventDefault();
     formData.class_id = formData.rrule.dtstart + formData.instructor
     try {
-      await saveClass(formData);
+      await saveClassData(formData);
       alert('Class saved successfully!');
     } catch (error) {
       console.error('Failed to save class:', error);

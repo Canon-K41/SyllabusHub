@@ -9,7 +9,7 @@ async function scrapeLinks(page: Page): Promise<Link[]> {
     function removeNestedParentheses(input: string): string {
       let result = input;
       while (true) {
-        let newResult = result.replace(/（[^（）]*）/g, '');
+        const newResult = result.replace(/（[^（）]*）/g, '');
         if (newResult === result) {
           break;
         }

@@ -7,7 +7,7 @@ const initDB = async () => {
     upgrade(db) {
       db.createObjectStore('calendarSettings', { keyPath: 'key' });
       db.createObjectStore('calendarEvents', { keyPath: 'id' });
-      db.createObjectStore('class', { keyPath: 'class_id' });
+      db.createObjectStore('class', { keyPath: 'courseName' });
       db.createObjectStore('userInfo', { keyPath: 'userName' });
     },
   });
@@ -46,14 +46,14 @@ export const getCalendarEvents = async () => {
 };
 
 
-export const saveClass = async (classData:  ClassData ) => {
+export const saveClassData = async (classData:  ClassData ) => {
   const db = await initDB();
   const transaction = db.transaction('class', 'readwrite');
   const store = transaction.store;
-  return store.put(classData);
+  return store.put({ ...classData, courseName: classData.courseName });
 };
 
-export const getClass = async () => {
+export const getClassData = async () => {
   const db = await initDB();
   const transaction = db.transaction('class');
   const store = transaction.store;

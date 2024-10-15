@@ -1,4 +1,3 @@
-//setting pathname & Link
 import * as React from 'react';
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -178,15 +177,13 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
     },
   ];
 
-
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
 
-        <AppBar position="fixed" open={isSidebarOpen}>
-          <Toolbar>
-            <IconButton
+      <AppBar position="fixed" open={isSidebarOpen}>
+        <Toolbar>
+          <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
@@ -196,55 +193,54 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
               ...(isSidebarOpen && { display: 'none' }),
             }}
           >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div">
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div">
             SyllabusHub
           </Typography>
-          </Toolbar>
-        </AppBar>
+        </Toolbar>
+      </AppBar>
 
-        <Drawer variant="permanent" open={isSidebarOpen}>
+      <Drawer variant="permanent" open={isSidebarOpen}>
 
-          <DrawerHeader>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </IconButton>
-          </DrawerHeader>
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </IconButton>
+        </DrawerHeader>
 
-          <Divider />
+        <Divider />
 
-          <List>
-
-            {menuItems.map((item, index) => (
-              <Link href={item.href} key={index}>
-                <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === item.href ? 'lightgray' : 'white' }}>
-                  <ListItemButton
+        <List>
+          {menuItems.map((item, index) => (
+            <Link href={item.href} key={index}>
+              <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === item.href ? 'lightgray' : 'white' }}>
+                <ListItemButton
                   sx={{
                     minHeight: 48,
                     justifyContent: isSidebarOpen ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
-                    <ListItemIcon
+                  <ListItemIcon
                     sx={{
                       minWidth: 0,
                       mr: isSidebarOpen ? 3 : 'auto',
                       justifyContent: 'center',
                     }}
                   >
-                      {item.icon}
-                    </ListItemIcon>
-                    <ListItemText primary={item.text} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
-                  </ListItemButton>
-                </ListItem>
-                </Link>
-            ))}
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+          ))}
 
-            {menuLists.map((item, index) => (
-              <React.Fragment key={index}>
-                <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname.includes(item.href) && !item.isOpen ? 'lightgray' : 'white' }}>
-                  <ListItemButton
+          {menuLists.map((item, index) => (
+            <React.Fragment key={index}>
+              <List disablePadding sx={{ display: 'block', bgcolor: pathname.includes(item.href) && !item.isOpen ? 'lightgray' : 'white' }}>
+                <ListItemButton
                   sx={{
                     minHeight: 48,
                     justifyContent: isSidebarOpen ? 'initial' : 'center',
@@ -252,20 +248,21 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
                   }}
                   onClick={() => handleClick(item.isOpen, item.setOpen)}
                 >
-                    <ListItemIcon
+                  <ListItemIcon
                     sx={{
                       minWidth: 0,
                       mr: isSidebarOpen ? 3 : 'auto',
                       justifyContent: 'center',
                     }}
                   >
-                      {item.icon}
-                    </ListItemIcon>
-                    <ListItemText primary={item.text} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
-                    {isSidebarOpen ? (item.isOpen ? <ExpandLess /> : <ExpandMore />) : null}
-                  </ListItemButton>
-                  {item.subItems && (
-                    <Collapse in={item.isOpen} timeout="auto" unmountOnExit>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
+                  {isSidebarOpen ? (item.isOpen ? <ExpandLess /> : <ExpandMore />) : null}
+                </ListItemButton>
+                {item.subItems && (
+                  <Collapse in={item.isOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
                       {item.subItems.map((subItem, subIndex) => (
                         <Link href={subItem.href} key={subIndex}>
                           <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === subItem.href ? 'lightgray' : 'white' }}>
@@ -274,49 +271,50 @@ const MiniDrawer: React.FC<MiniDrawerProps> = ({ children }) => {
                               <ListItemText primary={subItem.text} />
                             </ListItemButton>
                           </ListItem>
-                          </Link>
+                        </Link>
                       ))}
-                      </Collapse>
-                  )}
-                </ListItem>
-                </React.Fragment>
-            ))}
+                    </List>
+                  </Collapse>
+                )}
+              </List>
+            </React.Fragment>
+          ))}
 
-            <Divider />
+          <Divider />
 
-            <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === '' ? 'light' : 'white' }}>
+          <List disablePadding sx={{ display: 'block', bgcolor: pathname === '' ? 'light' : 'white' }}>
             <Link href="/settings">
-                <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === '/settings'? 'lightgray' : 'white' }}>
-              <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: isSidebarOpen ? 'initial' : 'center',
-                px: 2.5,
-              }}
-            >
-                <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: isSidebarOpen ? 3 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                  <AccountCircleIcon />
-                </ListItemIcon>
-                <ListItemText primary={'アカウント'} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
-              </ListItemButton>
+              <ListItem disablePadding sx={{ display: 'block', bgcolor: pathname === '/settings'? 'lightgray' : 'white' }}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: isSidebarOpen ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: isSidebarOpen ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <AccountCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={'アカウント'} sx={{ opacity: isSidebarOpen ? 1 : 0 }} />
+                </ListItemButton>
               </ListItem>
-              </Link>
-            </ListItem>
+            </Link>
           </List>
+        </List>
 
-        </Drawer>
+      </Drawer>
 
-        <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 1, mt: 8 }}>
-          {children}
-        </Box>
-
+      <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 1, mt: 8 }}>
+        {children}
       </Box>
+
+    </Box>
   );
 };
 

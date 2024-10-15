@@ -8,6 +8,7 @@ import AssignmentDetails from './AssignmentDetails';
 import EditCourseDialog from './EditCourseDialog';
 import { ClassData } from '@/types/type';
 import { createTheme } from '@mui/material/styles';
+import { initialData } from '@/data/testData';
 
 const theme = createTheme({
   palette: {
@@ -28,7 +29,7 @@ const statusColors = {
 };
 
 const statusLabels = {
-  cancellation: 'キャンセル',
+  cancellation: '履修中止',
   inProgress: '進行中',
   completed: '完了',
   failed: '不合格',
@@ -101,62 +102,7 @@ function Row({ row, onEdit }: { row: ClassData; onEdit: (course: ClassData) => v
 }
 
 export default function CourseTableMUIDetailed() {
-  const [courses, setCourses] = useState<ClassData[]>([
-    {
-      courseName: "基幹教育セミナー",
-      description: "基幹教育セミナーは、学部・学科を超えた異なる専門分野の知識や技術を総合的に学び、問題解決能力を養うことを目的としています。",
-      url: "https://moodle.s.kyushu-u.ac.jp/course/view.php?id=12345",
-      dayOfWeek: ["月3", "木1"],
-      credits: "1",
-      grade: "Ｒ",
-      year: "2023",
-      term: "夏学期",
-      fieldCode: "KED-KES1111J",
-      courseId: "23535305",
-      instructor: "藤井　慎介",
-      date: "2023/08/18",
-      status: 'completed',
-      attendances: [
-        { date: '2023/04/10', status: 'present' },
-        { date: '2023/04/17', status: 'present' },
-        { date: '2023/04/24', status: 'absent' },
-        { date: '2023/05/01', status: 'present' },
-        { date: '2023/05/08', status: 'present' },
-      ],
-      assignments: [
-        { name: 'レポート1', dueDate: '2023/04/30', submittedDate: '2023/04/28', score: 85, maxScore: 100 },
-        { name: 'レポート2', dueDate: '2023/05/15', submittedDate: '2023/05/14', score: 92, maxScore: 100 },
-        { name: '最終レポート', dueDate: '2023/06/30', submittedDate: null, score: null, maxScore: 100 },
-      ],
-    },
-    {
-      courseName: "課題協学科目",
-      description: "課題協学科目は、学部・学科を超えた異なる専門分野の知識や技術を総合的に学び、問題解決能力を養うことを目的としています。",
-      url: "https://moodle.s.kyushu-u.ac.jp/course/view.php?id=23456",
-      dayOfWeek: ["火2", "金4"],
-      credits: "2.5",
-      grade: "Ｓ",
-      year: "2023",
-      term: "後",
-      fieldCode: "KED-ICL1131J",
-      courseId: "23531702",
-      instructor: "大橋　浩",
-      date: "2024/02/20",
-      status: 'inProgress',
-      attendances: [
-        { date: '2023/10/02', status: 'present' },
-        { date: '2023/10/09', status: 'present' },
-        { date: '2023/10/16', status: 'present' },
-        { date: '2023/10/23', status: 'absent' },
-        { date: '2023/10/30', status: 'present' },
-      ],
-      assignments: [
-        { name: 'グループワーク1', dueDate: '2023/10/20', submittedDate: '2023/10/19', score: 88, maxScore: 100 },
-        { name: 'グループワーク2', dueDate: '2023/11/10', submittedDate: '2023/11/09', score: 95, maxScore: 100 },
-        { name: '最終プレゼンテーション', dueDate: '2023/12/15', submittedDate: null, score: null, maxScore: 100 },
-      ],
-    },
-  ]);
+  const [courses, setCourses] = useState<ClassData[]>(initialData);
 
   const [editingCourse, setEditingCourse] = useState<ClassData | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
