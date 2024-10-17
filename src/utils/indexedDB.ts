@@ -53,6 +53,18 @@ export const saveClassData = async (classData:  ClassData ) => {
   return store.put({ ...classData, courseName: classData.courseName });
 };
 
+export const saveClassPropaty = async (courseName: string, propaty: string, newValue: string) => {
+  const db = await initDB();
+  const transaction = db.transaction('class', 'readwrite');
+  const store = transaction.store;
+  const result = await store.get(courseName);
+  if (result) {
+    result[propaty] = newValue;
+    return store.put(result);
+  }
+  return null;
+}
+
 export const getClassData = async () => {
   const db = await initDB();
   const transaction = db.transaction('class');

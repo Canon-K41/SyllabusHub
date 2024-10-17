@@ -1,4 +1,12 @@
 "use client"
+//
+//import TimeTable from '@/ui/calendar/TimeTable'
+//
+//export default function Page() {
+//  return (
+//    <TimeTable />
+//  )
+//}
 
 import React, { useRef, useEffect } from 'react'
 import { useResizeObserver } from '@/hooks/useResizeObserver'

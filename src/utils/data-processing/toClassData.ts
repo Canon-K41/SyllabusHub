@@ -1,14 +1,10 @@
-import { callClassInfo } from '@/utils/callApi/callClassInfo';
 import { saveClassData } from '@/utils/indexedDB';
+import { updateMoodleLinkDiff } from '@/utils/data-processing/updateDiff';
 import { ClassData, Link } from '@/types/type';
 
 type Status = 'cancellation' | 'inProgress' | 'completed' | 'failed';
 
-export const toClassData = async (): Promise<ClassData[]> => {
-  const { moodleLinkData, campasmateClassData } = await callClassInfo();
-  if(!moodleLinkData || !campasmateClassData ) {
-    throw new Error('Data could not be retrieved.Try again later.');
-  }
+export const toClassData = async (moodleLinkData: Link[], campasmateClassData: ClassData[]) => {
 
   // campasmateClassDataが配列であることを保証
   const campasmateClassArray = Array.isArray(campasmateClassData) ? campasmateClassData : [];
@@ -24,7 +20,7 @@ export const toClassData = async (): Promise<ClassData[]> => {
     } else if (classItem.grade === 'Ｗ') {
       status = 'cancellation';
     }
-    if(!classItem.credits) {
+    if (classItem.credits === null) {
       classItem.credits = '?';
     }
     if(!classItem.grade) {
@@ -58,20 +54,5 @@ export const toClassData = async (): Promise<ClassData[]> => {
     });
   });
 
-
-  classData.forEach((classItem) => {
-    moodleLinkData.forEach((moodleLink: Link) => {
-      if (moodleLink.cleanTitles?.includes(classItem.courseName)) { 
-        classItem.url = moodleLink.url;
-        classItem.dayOfWeek = moodleLink.weekOfDateParts;
-      }
-    });
-  });
-
-  console.log("Final class data:", classData);
-
-  classData.forEach((classItem) => {
-    saveClassData(classItem);
-  });
-  return classData;
+  updateMoodleLinkDiff(moodleLinkData, classData);
 };

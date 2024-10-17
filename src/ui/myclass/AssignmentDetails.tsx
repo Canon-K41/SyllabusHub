@@ -18,7 +18,7 @@ const AssignmentDetails: React.FC<AssignmentDetailsProps> = ({ assignments }) =>
         <TableHead>
           <TableRow>
             <TableCell>課題名</TableCell>
-            <TableCell>提出日</TableCell>
+            <TableCell>提出状況</TableCell>
             <TableCell>得点</TableCell>
           </TableRow>
         </TableHead>

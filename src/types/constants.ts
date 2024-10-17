@@ -18,6 +18,7 @@ export const gradeColors: { [key: string]: { bg: string, text: string } } = {
   'Ｒ': { bg: '#FAEBD7', text: '#FFD700' },
   'Ｗ': { bg: '#F2F2F2', text: '#808080' },
   '?': { bg: '#F2F2F2', text: '#808080' },
+  null: { bg: '#F2F2F2', text: '#808080' }
 };
 
 export const statusColors = {

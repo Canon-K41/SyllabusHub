@@ -1,14 +1,17 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Box, Button, Checkbox, FormControlLabel, FormGroup, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Tab, Typography } from '@mui/material';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { Accordion, AccordionSummary, AccordionDetails, Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Tab, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ClassData } from '@/types/type';
 import { getClassData } from '@/utils/indexedDB';
+import UpdataButton from "@/ui/myclass/UpdateButton";
 import { gradeToGPA, gradeColors, statusColors, statusLabels, COLORS } from '@/types/constants';
 import Row from '@/ui/myclass/Row';
+import Filters from '@/ui/myclass/Filters';
 
 export default function EnhancedGradeAnalysis() {
   const [classData, setClassData] = useState<ClassData[]>([]);
+  const [filteredData, setFilteredData] = useState<ClassData[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -19,38 +22,22 @@ export default function EnhancedGradeAnalysis() {
 
   const [tabValue, setTabValue] = useState(0);
 
-  const years = useMemo(() => [...new Set(classData.map(item => item.year))], [classData]);
-  const terms = useMemo(() => [...new Set(classData.map(item => item.term))], [classData]);
-
-
-
-  const initialYearTermFilters: { [year: string]: string[] } = years.reduce((acc, year) => {
-    acc[year] = [...terms];
-    return acc;
-  }, {} as { [year: string]: string[] });
-  const [yearTermFilters, setYearTermFilters] = useState<{ [year: string]: string[] }>(initialYearTermFilters);
-
-  console.log(yearTermFilters);
-  const filteredData = useMemo(() => {
-    return classData.filter(item => {
-      const yearFilters = yearTermFilters[item.year];
-      return !yearFilters || yearFilters.length === 0 || yearFilters.includes(item.term);
-    });
-  }, [classData, yearTermFilters]);
-
-
-  const { totalCredits, averageGPA, gradeDistribution, termGPA } = useMemo(() => {
+  const { totalCredits, averageGPA, gradeDistribution, termGPA, gradeCount } = useMemo(() => {
     let totalCredits = 0;
     let totalGradePoints = 0;
-    const gradeCount: { [key: string]: number } = { 'Ｓ': 0, 'Ａ': 0, 'Ｂ': 0, 'Ｃ': 0, 'Ｆ': 0, 'Ｒ': 0, 'Ｗ': 0 };
+    const gradeCount: { [key: string]: number } = { 'Ｓ': 0, 'Ａ': 0, 'Ｂ': 0, 'Ｃ': 0, 'Ｆ': 0, 'Ｒ': 0, 'Ｗ': 0, '?' : 0 };
     const termData: { [key: string]: { credits: number, points: number } } = {};
+    let numberOfR = 0;
 
     filteredData.forEach(item => {
-      const credits = parseInt(item.credits);
-      totalCredits += credits;
-      gradeCount[item.grade] += credits;
+      if(item.grade !== '?' ){
+        if(item.grade === 'Ｒ'){
+          numberOfR++;
+        }
+        const credits = parseFloat(item.credits);
+        totalCredits += credits;
+        gradeCount[item.grade] += credits;
 
-      if (item.credits !== '?') {
         const points = credits * (gradeToGPA[item.grade] || 0);
         totalGradePoints += points;
 
@@ -63,76 +50,44 @@ export default function EnhancedGradeAnalysis() {
       }
     });
 
-    const averageGPA = totalGradePoints / totalCredits || 0;
+    //GPAにおいて、Rは除外する
+    const averageGPA = totalCredits > 0 ? totalGradePoints / (totalCredits - numberOfR ) : 0;
     const gradeDistribution = Object.entries(gradeCount)
       .map(([grade, count]) => ({
         grade,
         count,
-        percentage: (count / totalCredits) * 100
+        percentage: totalCredits > 0 ? (count / totalCredits) * 100 : 0
       }))
       .filter(item => item.percentage > 0);
 
     const termGPA = Object.entries(termData).map(([term, data]) => ({
       term,
-      gpa: Number((data.points / data.credits).toFixed(2))
+      gpa: data.credits > 0 ? Number((data.points / data.credits).toFixed(2)) : 0
     })).sort((a, b) => a.term.localeCompare(b.term));
 
-    return { totalCredits, averageGPA, gradeDistribution, termGPA };
+    return { totalCredits, averageGPA, gradeDistribution, termGPA, gradeCount };
   }, [filteredData]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const handleTermFilterChange = (year: string, term: string) => {
-    setYearTermFilters(prev => {
-      const yearFilters = prev[year] || [];
-      const updatedYearFilters = yearFilters.includes(term)
-        ? yearFilters.filter(t => t !== term)
-        : [...yearFilters, term];
-
-      return {
-        ...prev,
-        [year]: updatedYearFilters
-      };
-    });
-  };
+  const handleFilterChange = useCallback((filteredData: ClassData[]) => {
+    setFilteredData(filteredData);
+  }, []);
 
   return (
     <Box sx={{ margin: 'auto', p: 2 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        成績データ解析
-      </Typography>
-      <Button variant="contained" color="primary" onClick={() => console.log(filteredData, yearTermFilters)} />
-
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="h6" component="h2" gutterBottom>
-          年度・学期フィルター
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h4" component="h1" gutterBottom sx={{ textAlign: 'left' }}>
+          成績データ解析
         </Typography>
-        {years.map(year => (
-          <Accordion key={year}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>{year}年度</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <FormGroup row>
-                {terms.map(term => (
-                  <FormControlLabel
-                    key={`${year}-${term}`}
-                    control={
-                      <Checkbox
-                        onChange={() => handleTermFilterChange(year, term)}
-                        defaultChecked={true}
-                      />
-                    }
-                    label={term}
-                  />
-                ))}
-              </FormGroup>
-            </AccordionDetails>
-          </Accordion>
-        ))}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <UpdataButton setClassData={setClassData} />
+        </Box>
       </Box>
+
+      <Filters classData={classData} onFilterChange={handleFilterChange} />
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
         <Tabs value={tabValue} onChange={handleTabChange} aria-label="grade analysis tabs">
@@ -211,6 +166,14 @@ export default function EnhancedGradeAnalysis() {
         <Typography>
           平均GPA: {averageGPA.toFixed(2)}
         </Typography>
+        <Typography>
+          成績ごとの個数:
+        </Typography>
+        <ul>
+          {Object.entries(gradeCount).map(([grade, count]) => (
+            <li key={grade}>{grade}: {count}</li>
+          ))}
+        </ul>
       </Box>
     </Box>
   );

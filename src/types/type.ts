@@ -6,7 +6,7 @@ export interface Attendance {
 export interface Assignment {
   name: string;
   dueDate: string;
-  href: string;
+  url: string;
   submittedDate: string | null;
   status: 'delated' | 'submitted' | 'unsubmitted';
   score: number | null;
@@ -27,6 +27,7 @@ export interface ClassData {
   grade: string;
   year: string;
   term: string;
+  place: string;
   instructor: string;
   description: string;
   url: string | null;
@@ -36,6 +37,14 @@ export interface ClassData {
   assignments: Assignment[];
 }
 
+export interface CampasmateData {
+  courseName: string;
+  credits: string;
+  grade: string;
+  year: string;
+  term: string;
+  instructor: string;
+}
 
 export interface UserInfo{ 
   userName: string,
