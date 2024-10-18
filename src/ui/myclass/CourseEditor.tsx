@@ -1,4 +1,3 @@
-'use client';
 import React, { useState } from 'react';
 import {
   TextField,
@@ -24,8 +23,9 @@ import {
   DialogActions, 
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { Attendance, Assignment, ClassData } from '@/types/type';
+import { Attendance, Assignment, ClassData, Status } from '@/types/type';
 import { saveClassData } from '@/utils/indexedDB';
+
 
 interface CourseEditorProps {
   course: ClassData;
@@ -43,7 +43,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, isOpen, onClose, cl
     setClassData(prevData => ({ ...prevData, [name as string]: value }));
   };
 
-  const handleSelectChange = (event: SelectChangeEvent<"cancellation" | "inProgress" | "completed" | "failed">) => {
+  const handleSelectChange = (event: SelectChangeEvent<Status>) => {
     const { name, value } = event.target;
     setClassData(prevData => ({ ...prevData, [name as string]: value }));
   };
@@ -74,7 +74,7 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, isOpen, onClose, cl
   const addAssignment = () => {
     setClassData(prevData => ({
       ...prevData,
-      assignments: [...prevData.assignments, { name: '', dueDate: '',status: 'unsubmitted',url: '', submittedDate: null, score: null, maxScore: 100 }],
+      assignments: [...prevData.assignments, { name: '', dueDate: '', status: 'unsubmitted', url: '', submittedDate: null, score: null, maxScore: 100 }],
     }));
   };
 
@@ -111,43 +111,43 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, isOpen, onClose, cl
       <DialogContent>
         <Box sx={{ margin: 'auto', padding: 2 }}>
           <Typography variant="h4" gutterBottom>
-          コース編集
-        </Typography>
+            コース編集
+          </Typography>
           <form onSubmit={handleSubmit}>
             {/* コース情報 */}
             <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                  fullWidth
-                  label="コース名"
-                  name="courseName"
-                  value={classData.courseName}
-                  onChange={handleChange}
-                  InputProps={{ readOnly: true }} 
-                  disabled
-                  required
-                />
+                    fullWidth
+                    label="コース名"
+                    name="courseName"
+                    value={classData.courseName}
+                    onChange={handleChange}
+                    InputProps={{ readOnly: true }} 
+                    disabled
+                    required
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                  fullWidth
-                  label="単位数"
-                  name="credits"
-                  value={classData.credits}
-                  onChange={handleChange}
-                  type="number"
-                />
+                    fullWidth
+                    label="単位数"
+                    name="credits"
+                    value={classData.credits}
+                    onChange={handleChange}
+                    type="number"
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                  fullWidth
-                  label="成績"
-                  name="grade"
-                  value={classData.grade}
-                  onChange={handleChange}
-                  select
-                >
+                    fullWidth
+                    label="成績"
+                    name="grade"
+                    value={classData.grade}
+                    onChange={handleChange}
+                    select
+                  >
                     <MenuItem value="Ｓ">S</MenuItem>
                     <MenuItem value="Ａ">A</MenuItem>
                     <MenuItem value="Ｂ">B</MenuItem>
@@ -155,91 +155,96 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, isOpen, onClose, cl
                     <MenuItem value="Ｆ">F</MenuItem>
                     <MenuItem value="Ｒ">R</MenuItem>
                     <MenuItem value="Ｗ">W</MenuItem>
+                    <MenuItem value="?">?</MenuItem>
                   </TextField>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                  fullWidth
-                  label="年度"
-                  name="year"
-                  value={classData.year}
-                  onChange={handleChange}
-                  required
-                />
+                    fullWidth
+                    label="年度"
+                    name="year"
+                    value={classData.year}
+                    onChange={handleChange}
+                    required
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                  select
-                  fullWidth
-                  label="学期"
-                  name="term"
-                  value={classData.term}
-                  onChange={handleChange}
-                  required
-                >
+                    select
+                    fullWidth
+                    label="学期"
+                    name="term"
+                    value={classData.term}
+                    onChange={handleChange}
+                    required
+                  >
                     <MenuItem value="春学期">春学期</MenuItem>
                     <MenuItem value="夏学期">夏学期</MenuItem>
                     <MenuItem value="秋学期">秋学期</MenuItem>
                     <MenuItem value="冬学期">冬学期</MenuItem>
-                    <MenuItem value="前期">前期</MenuItem>
-                    <MenuItem value="後期">後期</MenuItem>
+                    <MenuItem value="前">前</MenuItem>
+                    <MenuItem value="前期集中">前期集中</MenuItem>
+                    <MenuItem value="後">後</MenuItem>
+                    <MenuItem value="後期集中">後期集中</MenuItem>
                     <MenuItem value="通年">通年</MenuItem>
                   </TextField>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                  fullWidth
-                  label="担当教員"
-                  name="instructor"
-                  value={classData.instructor}
-                  onChange={handleChange}
-                  required
-                />
+                    fullWidth
+                    label="担当教員"
+                    name="instructor"
+                    value={classData.instructor}
+                    onChange={handleChange}
+                    required
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                  fullWidth
-                  label="説明"
-                  name="description"
-                  value={classData.description}
-                  onChange={handleChange}
-                  multiline
-                  rows={3}
-                />
+                    fullWidth
+                    label="説明"
+                    name="description"
+                    value={classData.description}
+                    onChange={handleChange}
+                    multiline
+                    rows={3}
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                  fullWidth
-                  label="URL"
-                  name="url"
-                  value={classData.url || ''}
-                  onChange={handleChange}
-                  type="url"
-                />
+                    fullWidth
+                    label="URL"
+                    name="url"
+                    value={classData.url || ''}
+                    onChange={handleChange}
+                    type="url"
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
-                  fullWidth
-                  label="曜日"
-                  name="dayOfWeek"
-                  value={classData.dayOfWeek ? classData.dayOfWeek.join(', ') : ''}
-                  onChange={handleDayOfWeekChange}
-                  helperText="カンマ区切りで入力してください（例：月2, 木5）*数字は半角"
-                />
+                    fullWidth
+                    label="曜日"
+                    name="dayOfWeek"
+                    value={classData.dayOfWeek ? classData.dayOfWeek.join(', ') : ''}
+                    onChange={handleDayOfWeekChange}
+                    helperText="カンマ区切りで入力してください（例：月2, 木5）*数字は半角"
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <FormControl fullWidth>
                     <InputLabel>ステータス</InputLabel>
                     <Select
-                    name="status"
-                    value={classData.status}
-                    onChange={handleSelectChange}
-                    required
-                  >
-                      <MenuItem value="cancellation">履修中止</MenuItem>
-                      <MenuItem value="inProgress">進行中</MenuItem>
-                      <MenuItem value="completed">完了</MenuItem>
-                      <MenuItem value="failed">不合格</MenuItem>
+                      name="status"
+                      value={classData.status}
+                      onChange={handleSelectChange}
+                      required
+                    >
+                    <MenuItem value="履修取消">履修取消</MenuItem>
+                    <MenuItem value="履修中">履修中</MenuItem>
+                    <MenuItem value="単位修得済">単位修得済</MenuItem>
+                    <MenuItem value="単位未修得">単位未修得</MenuItem>
+
+                      
                     </Select>
                   </FormControl>
                 </Grid>
@@ -249,8 +254,8 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, isOpen, onClose, cl
             {/* 出席状況 */}
             <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
               <Typography variant="h6" gutterBottom>
-              出席状況
-            </Typography>
+                出席状況
+              </Typography>
               <TableContainer>
                 <Table>
                   <TableHead>
@@ -265,44 +270,44 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, isOpen, onClose, cl
                       <TableRow key={index}>
                         <TableCell>
                           <TextField
-                          type="date"
-                          value={attendance.date}
-                          onChange={(e) => handleAttendanceChange(index, 'date', e.target.value)}
-                          fullWidth
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                        />
+                            type="date"
+                            value={attendance.date}
+                            onChange={(e) => handleAttendanceChange(index, 'date', e.target.value)}
+                            fullWidth
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                          />
                         </TableCell>
-                          <TableCell>
-                            <Select
+                        <TableCell>
+                          <Select
                             value={attendance.status}
                             onChange={(e) => handleAttendanceChange(index, 'status', e.target.value)}
                             fullWidth
                           >
-                              <MenuItem value="present">出席</MenuItem>
-                              <MenuItem value="absent">欠席</MenuItem>
-                              <MenuItem value="late">遅刻</MenuItem>
-                            </Select>
-                          </TableCell>
-                          <TableCell>
-                            <Button onClick={() => removeAttendance(index)}>削除</Button>
-                          </TableCell>
-                        </TableRow>
+                            <MenuItem value="present">出席</MenuItem>
+                            <MenuItem value="absent">欠席</MenuItem>
+                            <MenuItem value="late">遅刻</MenuItem>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <Button onClick={() => removeAttendance(index)}>削除</Button>
+                        </TableCell>
+                      </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
               <Button startIcon={<AddIcon />} onClick={addAttendance} sx={{ mt: 2 }}>
-              出席を追加
-            </Button>
+                出席を追加
+              </Button>
             </Paper>
 
             {/* 課題 */}
             <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
               <Typography variant="h6" gutterBottom>
-              課題
-            </Typography>
+                課題
+              </Typography>
               <TableContainer>
                 <Table>
                   <TableHead>
@@ -322,31 +327,31 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, isOpen, onClose, cl
                       <TableRow key={index}>
                         <TableCell>
                           <TextField
-                          value={assignment.name}
-                          onChange={(e) => handleAssignmentChange(index, 'name', e.target.value)}
-                          fullWidth
-                        />
+                            value={assignment.name}
+                            onChange={(e) => handleAssignmentChange(index, 'name', e.target.value)}
+                            fullWidth
+                          />
                         </TableCell>
-                          <TableCell>
-                            <Select
+                        <TableCell>
+                          <Select
                             value={assignment.status}
                             onChange={(e) => handleAssignmentChange(index, 'status', e.target.value)}
                             fullWidth
                           >
-                              <MenuItem value="unsubmitted">未提出</MenuItem>
-                              <MenuItem value="submitted">提出済み</MenuItem>
-                              <MenuItem value="delated">遅延</MenuItem>
-                            </Select>
-                          </TableCell>
-                          <TableCell>
-                            <TextField
+                            <MenuItem value="unsubmitted">未提出</MenuItem>
+                            <MenuItem value="submitted">提出済み</MenuItem>
+                            <MenuItem value="delated">遅延</MenuItem>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <TextField
                             value={assignment.url}
                             onChange={(e) => handleAssignmentChange(index, 'url', e.target.value)}
                             fullWidth
                           />
-                          </TableCell>
-                          <TableCell>
-                            <TextField
+                        </TableCell>
+                        <TableCell>
+                          <TextField
                             type="date"
                             value={assignment.dueDate}
                             onChange={(e) => handleAssignmentChange(index, 'dueDate', e.target.value)}
@@ -355,9 +360,9 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, isOpen, onClose, cl
                               shrink: true,
                             }}
                           />
-                          </TableCell>
-                          <TableCell>
-                            <TextField
+                        </TableCell>
+                        <TableCell>
+                          <TextField
                             type="date"
                             value={assignment.submittedDate || ''}
                             onChange={(e) => handleAssignmentChange(index, 'submittedDate', e.target.value || null)}
@@ -366,49 +371,49 @@ const CourseEditor: React.FC<CourseEditorProps> = ({ course, isOpen, onClose, cl
                               shrink: true,
                             }}
                           />
-                          </TableCell>
-                          <TableCell>
-                            <TextField
+                        </TableCell>
+                        <TableCell>
+                          <TextField
                             type="number"
                             value={assignment.score !== null ? assignment.score : ''}
                             onChange={(e) => handleAssignmentChange(index, 'score', e.target.value ? Number(e.target.value) : null)}
                             fullWidth
                           />
-                          </TableCell>
-                          <TableCell>
-                            <TextField
+                        </TableCell>
+                        <TableCell>
+                          <TextField
                             type="number"
                             value={assignment.maxScore}
                             onChange={(e) => handleAssignmentChange(index, 'maxScore', Number(e.target.value))}
                             fullWidth
                           />
-                          </TableCell>
-                          <TableCell>
-                            <IconButton onClick={() => removeAssignment(index)} color="error">
-                              <DeleteIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton onClick={() => removeAssignment(index)} color="error">
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
               <Button startIcon={<AddIcon />} onClick={addAssignment} sx={{ mt: 2 }}>
-              課題を追加
-            </Button>
+                課題を追加
+              </Button>
             </Paper>
             <DialogActions>
               <Button type="submit" variant="contained" color="primary">
-              保存
-            </Button>
+                保存
+              </Button>
               <Button onClick={onClose} color="secondary">
-              キャンセル
-            </Button>
+                キャンセル
+              </Button>
             </DialogActions>
           </form>
         </Box>
       </DialogContent>
-      </Dialog>
+    </Dialog>
   );
 };
 

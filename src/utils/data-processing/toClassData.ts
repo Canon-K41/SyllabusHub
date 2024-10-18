@@ -1,58 +1,34 @@
-import { saveClassData } from '@/utils/indexedDB';
-import { updateMoodleLinkDiff } from '@/utils/data-processing/updateDiff';
-import { ClassData, Link } from '@/types/type';
+import { CampasmateData, ClassData, Status } from '@/types/type';
 
-type Status = 'cancellation' | 'inProgress' | 'completed' | 'failed';
-
-export const toClassData = async (moodleLinkData: Link[], campasmateClassData: ClassData[]) => {
+export const toClassData = async ( campasmateClassData: CampasmateData[]) => {
 
   // campasmateClassDataが配列であることを保証
-  const campasmateClassArray = Array.isArray(campasmateClassData) ? campasmateClassData : [];
+  const campasmateClassArray = Array.isArray(campasmateClassData) ? campasmateClassData : [campasmateClassData];
 
   const classData: ClassData[] = [];
 
-  campasmateClassArray.forEach((classItem: ClassData) => {
-    let status: Status = 'completed';
-    if (!classItem.grade) {
-      status = 'inProgress';
+  campasmateClassArray.forEach((classItem: CampasmateData) => {
+    let status: Status = '単位修得済';
+    if (classItem.grade === '?') {
+      status = '履修中';
     } else if (classItem.grade === 'Ｆ') {
-      status = 'failed';
+      status = '単位未修得';
     } else if (classItem.grade === 'Ｗ') {
-      status = 'cancellation';
+      status = '履修取消';
     }
-    if (classItem.credits === null) {
-      classItem.credits = '?';
-    }
-    if(!classItem.grade) {
-      classItem.grade = '?';
-    }
-    if(!classItem.instructor) {
-      classItem.instructor = '?';
-    }
-
-    if(!classItem.term) {
-      classItem.term = '?';
-    }
-    if(!classItem.year) {
-      classItem.year = '?';
-    }
-    if(!classItem.description) {
-      classItem.description = '未設定';
-    }
-    if(!classItem.url) {
-      classItem.url = '';
-    }
-    if(!classItem.dayOfWeek) {
-      classItem.dayOfWeek = [];
-    }
+        
 
     classData.push({
       ...classItem,
       status,
+      place: '', 
+      description: '', 
+      url: '', 
+      dayOfWeek: [], 
       attendances: [],
-      assignments: [],
+      assignments: []
     });
   });
 
-  updateMoodleLinkDiff(moodleLinkData, classData);
+  return (classData);
 };

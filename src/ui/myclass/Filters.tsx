@@ -9,9 +9,10 @@ interface FiltersProps {
 
 const Filters: React.FC<FiltersProps> = ({ classData, onFilterChange }) => {
   const years = useMemo(() => [...new Set(classData.map(item => item.year))], [classData]);
-  const terms = useMemo(() => ['春学期', '夏学期', '秋学期', '冬学期', '前', '後', '通年', '前期集中'], []);
-  const statuses = ['cancellation', 'inProgress', 'completed', 'failed'];
-  const grades = ['Ｓ', 'Ａ', 'Ｂ', 'Ｃ', 'Ｆ', 'Ｒ', 'Ｗ', '?'];
+  const terms = useMemo(() => [...new Set(classData.map(item => item.term))], [classData]);
+  const statuses = useMemo(() => [...new Set(classData.map(item => item.status))], [classData]);
+  const grades = useMemo(() => [...new Set(classData.map(item => item.grade))], [classData]);
+  const field = useMemo(() => [...new Set(classData.map(item => item.field))], [classData]);
 
   const initialGradeFilters = grades.reduce((acc, grade) => {
     acc[grade] = true;
@@ -19,12 +20,7 @@ const Filters: React.FC<FiltersProps> = ({ classData, onFilterChange }) => {
   }, {} as { [grade: string]: boolean });
   const [gradeFilters, setGradeFilters] = useState<{ [grade: string]: boolean }>(initialGradeFilters);
 
-  const initialYearFilters = useMemo(() => {
-    return years.reduce((acc, year) => {
-      acc[year] = true;
-      return acc;
-    }, {} as { [year: string]: boolean });
-  }, [years]);
+  const [yearFilters, setYearFilters] = useState(years);
 
   const initialTermFilters = useMemo(() => {
     return terms.reduce((acc, term) => {
@@ -40,20 +36,38 @@ const Filters: React.FC<FiltersProps> = ({ classData, onFilterChange }) => {
     }, {} as { [status: string]: boolean });
   }, [statuses]);
 
-  const [yearFilters, setYearFilters] = useState<{ [year: string]: boolean }>(initialYearFilters);
+  const initialFieldFilter = useMemo(() => {
+    return field.reduce((acc, isBaseSubject) => {
+      acc[isBaseSubject] = true;
+      return acc;
+    }, {} as { [isBaseSubject: string]: boolean });
+  }, [field]);
+
   const [termFilters, setTermFilters] = useState<{ [term: string]: boolean }>(initialTermFilters);
   const [statusFilters, setStatusFilters] = useState<{ [status: string]: boolean }>(initialStatusFilters);
+  const [fieldFilters, setFieldFilters] = useState<{ [field: string]: boolean }>(initialFieldFilter);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const filteredData = classData.filter(item => {
-      const gradeFilter = gradeFilters[item.grade];
-      const yearFilter = yearFilters[item.year];
-      const termFilter = termFilters[item.term];
-      const statusFilter = statusFilters[item.status];
-      return gradeFilter && yearFilter && termFilter && statusFilter;
-    });
-    onFilterChange(filteredData);
-  }, [classData, gradeFilters, yearFilters, termFilters, statusFilters, onFilterChange]);
+    if (Object.keys(initialTermFilters).length > 0 && Object.keys(initialStatusFilters).length > 0) {
+      setIsLoading(false);
+    }
+  }, [initialTermFilters, initialStatusFilters]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const filteredData = classData.filter(item => {
+        const gradeFilter = !gradeFilters[item.grade];
+        const yearFilter = !yearFilters.includes(item.year);
+        const termFilter = !termFilters[item.term];
+        const statusFilter = !statusFilters[item.status];
+        const field = !fieldFilters[item.field];
+        return gradeFilter && yearFilter && termFilter && statusFilter && field;
+      });
+      onFilterChange(filteredData);
+    }
+  }, [classData, gradeFilters, yearFilters, termFilters, statusFilters, onFilterChange, isLoading]);
 
   const handleGradeFilterChange = (grade: string) => {
     setGradeFilters(prev => ({
@@ -63,10 +77,11 @@ const Filters: React.FC<FiltersProps> = ({ classData, onFilterChange }) => {
   };
 
   const handleYearFilterChange = (year: string) => {
-    setYearFilters(prev => ({
-      ...prev,
-      [year]: !prev[year]
-    }));
+    if (yearFilters.includes(year)) {
+      setYearFilters(yearFilters.filter(item => item !== year));
+    } else {
+      setYearFilters([...yearFilters, year]);
+    }
   };
 
   const handleTermFilterChange = (term: string) => {
@@ -83,6 +98,17 @@ const Filters: React.FC<FiltersProps> = ({ classData, onFilterChange }) => {
     }));
   };
 
+  const handleFieldFilterChange = (isBaseSubject: string) => {
+    setFieldFilters(prev => ({
+      ...prev,
+      [isBaseSubject]: !prev[isBaseSubject]
+    }));
+  };
+
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
+
   return (
     <Box>
       <Box sx={{ mb: 2 }}>
@@ -95,7 +121,7 @@ const Filters: React.FC<FiltersProps> = ({ classData, onFilterChange }) => {
               key={year}
               control={
                 <Checkbox
-                  checked={yearFilters[year]}
+                  checked={!yearFilters.includes(year)}
                   onChange={() => handleYearFilterChange(year)}
                 />
               }
@@ -115,11 +141,32 @@ const Filters: React.FC<FiltersProps> = ({ classData, onFilterChange }) => {
               key={term}
               control={
                 <Checkbox
-                  checked={termFilters[term]}
+                  checked={!termFilters[term]}
                   onChange={() => handleTermFilterChange(term)}
                 />
               }
               label={term}
+            />
+          ))}
+        </FormGroup>
+      </Box>
+
+        <Box sx={{ mb: 2 }}>
+        <Typography variant="h6" component="h2" gutterBottom>
+          領域フィルター
+        </Typography>
+        <FormGroup row>
+          {field.map(field=> (
+            <FormControlLabel
+              key={field}
+              control={
+                <Checkbox
+                  checked={!fieldFilters[field]}
+                  onChange={() => handleFieldFilterChange(field)}
+
+                />
+              }
+              label={field}
             />
           ))}
         </FormGroup>
@@ -135,7 +182,7 @@ const Filters: React.FC<FiltersProps> = ({ classData, onFilterChange }) => {
               key={status}
               control={
                 <Checkbox
-                  checked={statusFilters[status]}
+                  checked={!statusFilters[status]}
                   onChange={() => handleStatusFilterChange(status)}
                 />
               }
@@ -155,7 +202,7 @@ const Filters: React.FC<FiltersProps> = ({ classData, onFilterChange }) => {
               key={grade}
               control={
                 <Checkbox
-                  checked={gradeFilters[grade]}
+                  checked={!gradeFilters[grade]}
                   onChange={() => handleGradeFilterChange(grade)}
                 />
               }

@@ -1,65 +1,90 @@
 import { callClassInfo } from "@/utils/callApi/callClassInfo";
 import { callHomework } from "@/utils/callApi/callHomework";
 import { callMoodleLink } from "@/utils/callApi/callMoodleLink";
-import { getClassData, saveClassData, saveClassPropaty } from "@/utils/indexedDB";
-import { CampasmateData, ClassData, HomeworkItem, Link } from "@/types/type";
+import { getClassData } from "@/utils/indexedDB";
+import { CampasmateData, ClassData, HomeworkItem, Link, Assignment } from "@/types/type";
 import { toClassData } from "@/utils/data-processing/toClassData";
-import { addHomework } from "@/utils/data-processing/addHomework";
 
-export async function updateMoodleLinkDiff(newMoodleLink?: Link[], oldClassData?: ClassData[]) {
-  const newMoodleLinkData = newMoodleLink || await callMoodleLink();
-  const oldClassDataList = oldClassData || await getClassData();
-  const newClassData = oldClassDataList.map((classItem) => {
-    newMoodleLinkData.forEach((moodleLink: Link) => {
-      if (moodleLink.cleanTitles?.includes(classItem.courseName)) { 
-        classItem.url = moodleLink.url;
-        classItem.dayOfWeek = moodleLink.weekOfDateParts;
-      }
+export async function updateMoodleLinkDiff(newMoodleLinkList?: Link[], oldClassDataList?: ClassData[]) {
+    const newMoodleLinkDataList = newMoodleLinkList || await callMoodleLink();
+    const oldClassDataListFromDB = oldClassDataList || await getClassData();
+
+    const newClassDataList = oldClassDataListFromDB.map((classItem) => {
+        newMoodleLinkDataList.forEach((moodleLink: Link) => {
+            if (moodleLink.cleanTitles?.includes(classItem.courseName)) { 
+                classItem.url = moodleLink.url;
+                classItem.dayOfWeek = moodleLink.weekOfDateParts;
+            }
+        });
+        return classItem;
     });
-    return classItem;
-  });
-  if (newClassData.length > 0) {
-    newClassData.forEach(async (classData: ClassData) => {
-      await saveClassData(classData);
-    });
-  }
+
+    return newClassDataList;
 }
 
-export async function updateClassDataDiff(newClassData?: CampasmateData[], oldClassData?: ClassData[]) {
-  const newClassDataList = newClassData || await callClassInfo();
-  const oldClassDataList = oldClassData || await getClassData();
-  
-  const diffClass = newClassDataList.filter((classData: CampasmateData) => {
-    return !oldClassDataList.find((oldClassData: ClassData) => oldClassData.courseName === classData.courseName);
-  });
+export async function updateClassDataDiff(newClassDataList?: CampasmateData[], oldClassDataList?: ClassData[]) {
+    const newCampasmateDataList = newClassDataList || await callClassInfo();
+    const oldClassDataListFromDB = oldClassDataList || await getClassData() || [];
+    
+    const diffCampasemateDataList = newCampasmateDataList.filter((classData: CampasmateData) => {
+        return !oldClassDataListFromDB.find((oldClassData: ClassData) => oldClassData.courseName === classData.courseName);
+    });
 
-  const existClass = newClassDataList.filter((classData: CampasmateData) => {
-    return oldClassDataList.find((oldClassData: ClassData) => oldClassData.courseName === classData.courseName);
-  });
+    const existClassDataList = newCampasmateDataList.filter((classData: CampasmateData) => {
+        return oldClassDataListFromDB.find((oldClassData: ClassData) => oldClassData.courseName === classData.courseName);
+    });
 
-  for (const classData of existClass) {
-    const oldClass = oldClassDataList.find((oldClassData: ClassData) => oldClassData.courseName === classData.courseName);
-    if (oldClass) {
-      if (oldClass.grade !== classData.grade) {
-        await saveClassPropaty(classData.courseName, 'grade', classData.grade);
-      }
-      if (oldClass.credits !== classData.credits) {
-        await saveClassPropaty(classData.courseName, 'credits', classData.credits);
-      }
-      if (oldClass.instructor !== classData.instructor) {
-        await saveClassPropaty(classData.courseName, 'instructor', classData.instructor);
-      }
+    for (const classData of existClassDataList) {
+        const oldClass = oldClassDataListFromDB.find((oldClassData: ClassData) => oldClassData.courseName === classData.courseName);
+        if (oldClass) {
+            if (oldClass.grade === '?') {
+                oldClass.grade = classData.grade;
+            }
+            if (oldClass.credits === '?') {
+                oldClass.credits = classData.credits;
+            }
+            if (oldClass.instructor === '?') {
+                oldClass.instructor = classData.instructor
+            }
+        }
     }
-  }
+    
+    const diffClassDataList = await toClassData(diffCampasemateDataList);
 
-  if (diffClass.length > 0) {
-    const newMoodleLink = await callMoodleLink();
-    await toClassData(newMoodleLink, diffClass);
-  }
+    return [...diffClassDataList, ...existClassDataList];
 }
 
-export async function updateHomeworkDiff(newHomework?: HomeworkItem[], oldClassData?: ClassData[]) {
-  const newHomeworkList = newHomework || await callHomework();
-  const oldClassDataList = oldClassData || await getClassData();
-  await addHomework(newHomeworkList, oldClassDataList);
+function checkAssignmentExists(homeworkItem: { homeworkTitle: string }, classItem: { assignments: { name: string }[] }): boolean {
+    return classItem.assignments.some(assignment => homeworkItem.homeworkTitle === assignment.name);
+}
+
+export async function updateHomeworkDiff(newHomeworkList?: HomeworkItem[], oldClassDataList?: ClassData[]) {
+    const newHomeworkDataList = newHomeworkList || await callHomework();
+    const oldClassDataListFromDB = oldClassDataList || await getClassData();
+
+    if (!newHomeworkDataList || !oldClassDataListFromDB) {
+        throw new Error('Data could not be retrieved. Please check your network connection and try again.');
+    }
+
+    oldClassDataListFromDB.forEach((classItem: ClassData) => {
+        newHomeworkDataList.forEach((homeworkItem: HomeworkItem) => {
+            let assignments: Assignment | null = null;
+            if (!checkAssignmentExists(homeworkItem, classItem)) {
+                assignments = {
+                    name: homeworkItem.homeworkTitle,
+                    dueDate: homeworkItem.deadline,
+                    url: homeworkItem.href,
+                    submittedDate: '',
+                    status: 'unsubmitted',
+                    score: 0,
+                    maxScore: 100,
+                };
+            }
+            if (homeworkItem.cleanTitles?.includes(classItem.courseName) && assignments) {
+                classItem.assignments.push(assignments);
+            }
+        });
+    });
+
+    return oldClassDataListFromDB;
 }

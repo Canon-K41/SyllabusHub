@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { IconButton, TableCell, TableRow, Collapse, Box, Typography, Chip, Table, TableBody, TableHead } from '@mui/material';
+import { IconButton, TableCell, TableRow, Collapse, Box, Typography, Chip, Table, TableBody, TableHead, Link } from '@mui/material';
 import { Edit as EditIcon, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import AttendanceDetails from '@/ui/myclass/AttendanceDetails';
 import AssignmentDetails from '@/ui/myclass/AssignmentDetails';
 import CourseEditor from '@/ui/myclass/CourseEditor';
 import { calculateAttendanceRate } from '@/utils/myclass/calculateAttendanceRate';
-import { gradeColors, statusColors, statusLabels } from '@/types/constants';
+import { gradeColors, statusColors  } from '@/types/constants';
 import { ClassData } from '@/types/type';
 
 function Row({ row, classData, setClassData }: { row: ClassData; classData: ClassData[], setClassData: React.Dispatch<React.SetStateAction<ClassData[]>> }) {
@@ -33,7 +33,7 @@ function Row({ row, classData, setClassData }: { row: ClassData; classData: Clas
         </TableCell>
         <TableCell align="center">
           <Chip
-            label={statusLabels[row.status]}
+            label={row.status}
             style={{
               backgroundColor: statusColors[row.status],
               color: 'white',
@@ -69,25 +69,40 @@ function Row({ row, classData, setClassData }: { row: ClassData; classData: Clas
               <Typography variant="h6" gutterBottom component="div">
                 詳細情報
               </Typography>
-              <TableCell>
+              <Typography>
+                {row.instructor}
+              </Typography>
+              <Typography>
                 {row.description}
-              </TableCell>
+              </Typography>
+              <Link 
+                href={row.url || '#'} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                component="a"
+              >
+                {row.url || 'リンクなし'}
+              </Link>
               <Table size="small" aria-label="details">
                 <TableHead>
-                  <TableRow>
-                    <TableCell>出席状況</TableCell>
-                    <TableCell>課題提出状況</TableCell>
-                  </TableRow>
+                  {row.attendances.length > 0 && (
+                    <TableRow>
+                      <TableCell>出席</TableCell>
+                      <TableCell>
+                        <AttendanceDetails attendances={row.attendances} attendanceRate={attendanceRate} />
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <AttendanceDetails attendances={row.attendances} attendanceRate={attendanceRate} />
-                    </TableCell>
-                    <TableCell>
-                      <AssignmentDetails assignments={row.assignments} />
-                    </TableCell>
-                  </TableRow>
+                  {row.assignments.length > 0 && (
+                    <TableRow>
+                      <TableCell>課題</TableCell>
+                      <TableCell>
+                        <AssignmentDetails assignments={row.assignments} />
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </Box>

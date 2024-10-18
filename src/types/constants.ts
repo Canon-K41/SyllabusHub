@@ -22,17 +22,11 @@ export const gradeColors: { [key: string]: { bg: string, text: string } } = {
 };
 
 export const statusColors = {
-  cancellation: '#FFA500',
-  inProgress: '#4169E1',
-  completed: '#32CD32',
-  failed: '#FF0000',
+  '履修取消': '#FFA500',
+  '履修中': '#4169E1',
+  '単位修得済': '#32CD32',
+  '単位未修得': '#FF0000',
 };
 
-export const statusLabels = {
-  cancellation: '履修中止',
-  inProgress: '進行中',
-  completed: '完了',
-  failed: '不合格',
-};
 
-export const COLORS = ['#4CAF50', '#2196F3', '#FFC107', '#FF5722', '#F44336', '#9E9E9E'];
+export const COLORS = ['#FFA500', '#32CD32', '#1E90FF', '#9370DB', '#FF4500', '#FFD700', '#A9A9A9'];

@@ -17,16 +17,14 @@ export async function loginToCampasmate(username: string, password: string) {
     // ユーザー名とパスワードを入力
     await page.fill('input[name="j_username"]', username, { timeout: 60000 });
     await page.fill('input[name="j_password"]', password, { timeout: 60000 });
-    console.log('ユーザー名とパスワードを入力しました。');
     
     // ログインボタンをクリック
     await page.click('input[type="submit"]', { timeout: 60000 });
-    console.log('ログインボタンをクリックしました。');
 
     // ログイン後のページを確認
     await page.waitForLoadState('networkidle', { timeout: 60000 });
-    console.log('ログイン後のページを確認しました。');
     
+    console.log('logged in to campasmate');
     return { browser, page };
   }catch (error) {
     await browser.close();

@@ -13,6 +13,7 @@ export const callHomework = async () => {
     },
     body: JSON.stringify({ username: accountName, password: password }),
   });
+  console.log('finished scraping homework');
   const moodleHomeworkData = await moodleLinkResponse.json();
   const homeworkData = moodleHomeworkData.homework;
   return homeworkData;

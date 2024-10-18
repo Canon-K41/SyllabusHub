@@ -6,6 +6,7 @@ export const callUserInfo = async (username: string, password: string) => {
     },
     body: JSON.stringify({ username, password }),
   });
+  console.log('finished scraping user info');
 
   if (!response.ok) {
     throw new Error('アカウント名もしくはパスワードが間違っています');

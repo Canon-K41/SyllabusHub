@@ -26,13 +26,15 @@ export async function POST(req: NextRequest) {
     const classes = await page.$$eval('tr.column_odd', (rows: Element[]) => {
       return rows.map(row => {
         const cells = row.querySelectorAll('td');
+        //基本非ＮＵＬＬ
         return {
           courseName: cells[0].textContent?.trim() || null,
-          credits: cells[1].textContent?.trim() || null,
-          grade: cells[2].textContent?.trim() || null,
+          credits: cells[1].textContent?.trim() || '?',
+          grade: cells[2].textContent?.trim() || '?',
           year: cells[4].textContent?.trim() || null,
           term: cells[5].textContent?.trim() || null,
-          instructor: cells[8].textContent?.trim() || null,
+          field: cells[6].textContent?.trim() ? '基幹教育科目' : '専攻教育科目',
+          instructor: cells[8].textContent?.trim() || '?',
         };
       });
     });

@@ -19,12 +19,11 @@ export async function loginToMoodle(username: string, password: string) {
     
     // ログインボタンをクリック
     await page.click('button[type="submit"]', { timeout: 60000 });
-    console.log('ログインボタンをクリックしました。');
 
     // ログイン後のページを確認
     await page.waitForLoadState('networkidle', { timeout: 60000 });
-    console.log('ログイン後のページを確認しました。');
 
+    console.log('Logged in to Moodle');
     return { browser, page };
   } catch (error) {
     await browser.close();

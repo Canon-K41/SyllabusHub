@@ -12,6 +12,8 @@ export interface Assignment {
   score: number | null;
   maxScore: number;
 }
+export type Status = '履修取消' | '履修中' | '単位修得済' | '単位未修得';
+export type Field = '専攻教育科目'　| '基幹教育科目' | 'その他';
 
 export interface HomeworkItem {
   href: string;
@@ -21,18 +23,12 @@ export interface HomeworkItem {
   deadline: string;
 }
 
-export interface ClassData {
-  courseName: string;
-  credits: string;
-  grade: string;
-  year: string;
-  term: string;
-  place: string;
-  instructor: string;
-  description: string;
+export interface ClassData extends CampasmateData {
+  place: string | null;
+  description: string | null;
   url: string | null;
-  dayOfWeek: string[];
-  status: 'cancellation' | 'inProgress' | 'completed' | 'failed';
+  dayOfWeek: string[] ;
+  status: Status;
   attendances: Attendance[];
   assignments: Assignment[];
 }
@@ -43,6 +39,7 @@ export interface CampasmateData {
   grade: string;
   year: string;
   term: string;
+  field: Field;
   instructor: string;
 }
 

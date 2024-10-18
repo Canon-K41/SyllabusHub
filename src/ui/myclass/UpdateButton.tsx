@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button, CircularProgress, Snackbar, Box } from '@mui/material';
-import { getClassData } from '@/utils/indexedDB';
 import { ClassData } from '@/types/type';
-import { updateMoodleLinkDiff, updateClassDataDiff, updateHomeworkDiff } from '@/utils/data-processing/updateDiff';
+import { updateClassData } from '@/utils/data-processing/updateClassData';
+import { saveClassData } from '@/utils/indexedDB';
 
 interface UpdateButtonProps {
   setClassData: (classData: ClassData[]) => void;
@@ -16,10 +16,10 @@ const UpdateButton: React.FC<UpdateButtonProps> = ({ setClassData }) => {
   const handleUpdate = async () => {
     setIsLoading(true);
     try {
-      await updateMoodleLinkDiff();
-      await updateClassDataDiff();
-      await updateHomeworkDiff();
-      const updatedClassData = await getClassData();
+      const updatedClassData = await updateClassData();
+      updatedClassData.forEach((classData) => {
+        saveClassData(classData);
+      });
       setClassData(updatedClassData);
       setSnackbarMessage('データの更新が完了しました。');
     } catch (error) {

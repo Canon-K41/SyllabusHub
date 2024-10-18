@@ -21,8 +21,7 @@ export const callClassInfo = async () => {
   console.log('finished scraping campasmate class');
 
   const campasmateClassJson = await campasmateClassResponse.json();
-  const campasmateClassData = campasmateClassJson.classes; // 正しいプロパティ名を使用
+  const campasmateClassData = campasmateClassJson.classes; 
   
-  console.log( campasmateClassData );
   return  campasmateClassData ;
 }

@@ -1,17 +1,18 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Tab, Typography } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Box,  Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, Tab, Typography, Checkbox } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { ClassData } from '@/types/type';
 import { getClassData } from '@/utils/indexedDB';
 import UpdataButton from "@/ui/myclass/UpdateButton";
-import { gradeToGPA, gradeColors, statusColors, statusLabels, COLORS } from '@/types/constants';
+import { gradeToGPA, COLORS } from '@/types/constants';
 import Row from '@/ui/myclass/Row';
 import Filters from '@/ui/myclass/Filters';
 
 export default function EnhancedGradeAnalysis() {
   const [classData, setClassData] = useState<ClassData[]>([]);
   const [filteredData, setFilteredData] = useState<ClassData[]>([]);
+  const [selectedTerms, setSelectedTerms] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -22,11 +23,13 @@ export default function EnhancedGradeAnalysis() {
 
   const [tabValue, setTabValue] = useState(0);
 
-  const { totalCredits, averageGPA, gradeDistribution, termGPA, gradeCount } = useMemo(() => {
+  const termOrder = ['春', '夏', '前', '前期集中', '秋', '冬', '後', '後期集中', '通年'];
+
+  const { gradeDistribution, termGPA  } = useMemo(() => {
     let totalCredits = 0;
     let totalGradePoints = 0;
     const gradeCount: { [key: string]: number } = { 'Ｓ': 0, 'Ａ': 0, 'Ｂ': 0, 'Ｃ': 0, 'Ｆ': 0, 'Ｒ': 0, 'Ｗ': 0, '?' : 0 };
-    const termData: { [key: string]: { credits: number, points: number } } = {};
+    const termData: { [key: string]: { credits: number, points: number, classes: number } } = {};
     let numberOfR = 0;
 
     filteredData.forEach(item => {
@@ -43,10 +46,11 @@ export default function EnhancedGradeAnalysis() {
 
         const termKey = `${item.year} ${item.term}`;
         if (!termData[termKey]) {
-          termData[termKey] = { credits: 0, points: 0 };
+          termData[termKey] = { credits: 0, points: 0, classes: 0 };
         }
         termData[termKey].credits += credits;
         termData[termKey].points += points;
+        termData[termKey].classes += 1;
       }
     });
 
@@ -62,11 +66,25 @@ export default function EnhancedGradeAnalysis() {
 
     const termGPA = Object.entries(termData).map(([term, data]) => ({
       term,
-      gpa: data.credits > 0 ? Number((data.points / data.credits).toFixed(2)) : 0
-    })).sort((a, b) => a.term.localeCompare(b.term));
+      gpa: data.credits > 0 ? Number((data.points / data.credits).toFixed(2)) : 0,
+      classes: data.classes,
+      totalCredits: data.credits,
+      gpt: data.points
+    })).sort((a, b) => {
+      const [yearA, termA] = a.term.split(' ');
+      const [yearB, termB] = b.term.split(' ');
+      if (yearA !== yearB) {
+        return yearA.localeCompare(yearB);
+      }
+      return termOrder.indexOf(termA) - termOrder.indexOf(termB);
+    });
 
-    return { totalCredits, averageGPA, gradeDistribution, termGPA, gradeCount };
+    return { totalCredits, averageGPA, gradeDistribution, termGPA, gradeCount, termClassCount: termData };
   }, [filteredData]);
+
+  useEffect(() => {
+    setSelectedTerms(termGPA.map(term => term.term));
+  }, [termGPA]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -75,6 +93,22 @@ export default function EnhancedGradeAnalysis() {
   const handleFilterChange = useCallback((filteredData: ClassData[]) => {
     setFilteredData(filteredData);
   }, []);
+
+  const handleTermSelect = (term: string) => {
+    setSelectedTerms(prevSelectedTerms =>
+      prevSelectedTerms.includes(term)
+        ? prevSelectedTerms.filter(t => t !== term)
+        : [...prevSelectedTerms, term]
+    );
+  };
+
+  const selectedTermData = termGPA.filter(term => selectedTerms.includes(term.term));
+  const selectedTotalClasses = selectedTermData.reduce((acc, term) => acc + term.classes, 0);
+  const selectedTotalCredits = selectedTermData.reduce((acc, term) => acc + term.totalCredits, 0);
+  const selectedTotalGPT = selectedTermData.reduce((acc, term) => acc + term.gpt, 0);
+  const selectedAverageGPA = selectedTotalCredits > 0
+    ? selectedTotalGPT / selectedTotalCredits
+    : 0;
 
   return (
     <Box sx={{ margin: 'auto', p: 2 }}>
@@ -87,7 +121,14 @@ export default function EnhancedGradeAnalysis() {
         </Box>
       </Box>
 
-      <Filters classData={classData} onFilterChange={handleFilterChange} />
+      <Accordion defaultExpanded={false}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>フィルター</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Filters classData={classData} onFilterChange={handleFilterChange} />
+        </AccordionDetails>
+      </Accordion>
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
         <Tabs value={tabValue} onChange={handleTabChange} aria-label="grade analysis tabs">
@@ -150,30 +191,54 @@ export default function EnhancedGradeAnalysis() {
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip formatter={(value: number) => value.toFixed(2) + '%'} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>
-      </Box>
 
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="h6" component="h2">
-          集計結果
-        </Typography>
-        <Typography>
-          総取得単位数: {totalCredits}
-        </Typography>
-        <Typography>
-          平均GPA: {averageGPA.toFixed(2)}
-        </Typography>
-        <Typography>
-          成績ごとの個数:
-        </Typography>
-        <ul>
-          {Object.entries(gradeCount).map(([grade, count]) => (
-            <li key={grade}>{grade}: {count}</li>
-          ))}
-        </ul>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="h6" component="h2">
+            集計結果
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table aria-label="集計結果テーブル">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">選択</TableCell>
+                  <TableCell align="center">学期</TableCell>
+                  <TableCell align="center">GPA</TableCell>
+                  <TableCell align="center">GPT</TableCell>
+                  <TableCell align="center">授業数</TableCell>
+                  <TableCell align="center">総合単位数</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {termGPA.map((termData, index) => (
+                  <TableRow key={index}>
+                    <TableCell align="center">
+                      <Checkbox
+                        checked={selectedTerms.includes(termData.term)}
+                        onChange={() => handleTermSelect(termData.term)}
+                      />
+                    </TableCell>
+                    <TableCell align="center">{termData.term}</TableCell>
+                    <TableCell align="center">{termData.gpa}</TableCell>
+                    <TableCell align="center">{termData.gpt}</TableCell>
+                    <TableCell align="center">{termData.classes}</TableCell>
+                    <TableCell align="center">{termData.totalCredits}</TableCell>
+                  </TableRow>
+                ))}
+                <TableRow>
+                  <TableCell align="center">合計</TableCell>
+                  <TableCell align="center">-</TableCell>
+                  <TableCell align="center">{selectedAverageGPA.toFixed(2)}</TableCell>
+                  <TableCell align="center">{selectedTotalGPT}</TableCell>
+                  <TableCell align="center">{selectedTotalClasses}</TableCell>
+                  <TableCell align="center">{selectedTotalCredits}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       </Box>
     </Box>
   );
